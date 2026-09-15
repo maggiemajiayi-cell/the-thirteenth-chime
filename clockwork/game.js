@@ -7,7 +7,7 @@ const views = [
 
 const game = {
   currentView: 1,
-  previousViews: [],
+  doorCloseUp: false,
   transitioning: false,
   soundOn: true,
 };
@@ -27,20 +27,32 @@ function showScreen(id) {
 
 function displayView(index) {
   game.currentView = index;
+  game.doorCloseUp = false;
+  renderView();
+}
+
+function renderView() {
   views.forEach((view, viewIndex) => {
     const element = document.getElementById('room-' + view.id);
-    const active = viewIndex === index;
+    const active = !game.doorCloseUp && viewIndex === game.currentView;
     element.classList.toggle('active-room', active);
     element.setAttribute('aria-hidden', String(!active));
   });
-  document.getElementById('hud-room').textContent = views[index].name;
-  document.getElementById('go-back').disabled = game.previousViews.length === 0;
+  const closeUp = document.getElementById('room-door-detail');
+  closeUp.classList.toggle('active-room', game.doorCloseUp);
+  closeUp.setAttribute('aria-hidden', String(!game.doorCloseUp));
+  document.getElementById('hud-room').textContent = game.doorCloseUp
+    ? 'Iron Door · Close-up'
+    : views[game.currentView].name;
+  document.getElementById('go-back').hidden = !game.doorCloseUp;
+  document.getElementById('turn-left').hidden = game.doorCloseUp;
+  document.getElementById('turn-right').hidden = game.doorCloseUp;
 }
 
 function startGame() {
   if (game.transitioning) return;
   game.transitioning = true;
-  game.previousViews = [];
+  game.doorCloseUp = false;
   closeDialogue();
   fade.classList.add('visible');
 
@@ -80,16 +92,23 @@ introVideo.addEventListener('ended', finishIntro);
 introVideo.addEventListener('error', finishIntro);
 
 function turnView(direction) {
-  if (game.transitioning || !document.getElementById('game-screen').classList.contains('active')) return;
-  game.previousViews.push(game.currentView);
+  if (game.transitioning || game.doorCloseUp || !document.getElementById('game-screen').classList.contains('active')) return;
   closeDialogue();
   displayView((game.currentView + direction + views.length) % views.length);
 }
 
 function goBack() {
-  if (game.transitioning || game.previousViews.length === 0) return;
+  if (game.transitioning || !game.doorCloseUp) return;
   closeDialogue();
-  displayView(game.previousViews.pop());
+  game.doorCloseUp = false;
+  renderView();
+}
+
+function lookAtDoor() {
+  if (game.transitioning || game.doorCloseUp) return;
+  game.doorCloseUp = true;
+  renderView();
+  showDialogue('The iron door fills your view. Use ↓ to return to the room.');
 }
 
 function showDialogue(text) {
@@ -113,11 +132,15 @@ function toggleSound() {
 }
 
 document.querySelectorAll('.hotspot').forEach(hotspot => {
-  hotspot.addEventListener('click', () => showDialogue(hotspot.dataset.description));
+  const inspect = () => {
+    if (hotspot.dataset.action === 'zoom-door') lookAtDoor();
+    else showDialogue(hotspot.dataset.description);
+  };
+  hotspot.addEventListener('click', inspect);
   hotspot.addEventListener('keydown', event => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      showDialogue(hotspot.dataset.description);
+      inspect();
     }
   });
 });

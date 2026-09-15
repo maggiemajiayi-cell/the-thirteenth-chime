@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clockmaker's Curse — Room Escape</title>
   <meta name="description" content="Explore a Victorian clockwork workshop through fixed first-person views. Click to inspect and find a way out." />
-  <link rel="stylesheet" href="style.css?v=9" />
+  <link rel="stylesheet" href="style.css?v=10" />
 </head>
 <body>
 
@@ -238,7 +238,7 @@
             <rect class="hotspot" x="425" y="102" width="150" height="140" data-description="The hands have stopped just before midnight." role="button" tabindex="0" aria-label="Inspect the wall clock"/>
             <rect class="hotspot" x="460" y="242" width="80" height="143" data-description="The pendulum swings with a slow, heavy rhythm." role="button" tabindex="0" aria-label="Inspect the pendulum"/>
             <ellipse class="hotspot" cx="500" cy="495" rx="190" ry="58" data-description="A circular brass platform sits beneath the pendulum. Its teeth are worn smooth." role="button" tabindex="0" aria-label="Inspect the gear platform"/>
-            <rect class="hotspot" x="760" y="145" width="160" height="290" data-description="An iron door is covered in strange runes. It is firmly locked." role="button" tabindex="0" aria-label="Inspect the iron door"/>
+            <rect class="hotspot" x="760" y="145" width="160" height="290" data-action="zoom-door" data-description="An iron door is covered in strange runes. It is firmly locked." role="button" tabindex="0" aria-label="Look closely at the iron door"/>
           </svg>
         </div>
 
@@ -324,10 +324,50 @@
             <path d="M576 377 H600 M588 365 V389" stroke="#e8b840" stroke-width="4"/>
             <path d="M290 471 H710" stroke="#a87531" stroke-width="9"/>
             <circle cx="500" cy="290" r="550" fill="url(#doorShade)"/>
-            <path class="hotspot" d="M346 462 V207 Q346 98 500 98 Q654 98 654 207 V462Z" data-description="The heavy iron door will not budge. Its runes glow faintly in the lamplight." role="button" tabindex="0" aria-label="Inspect the locked iron door"/>
+            <path class="hotspot" d="M346 462 V207 Q346 98 500 98 Q654 98 654 207 V462Z" data-action="zoom-door" data-description="The heavy iron door will not budge. Its runes glow faintly in the lamplight." role="button" tabindex="0" aria-label="Look closely at the locked iron door"/>
             <rect class="hotspot" x="380" y="140" width="240" height="215" data-description="The marks repeat in a pattern, but their meaning is still unclear." role="button" tabindex="0" aria-label="Inspect the door runes"/>
           </svg>
         </div>
+
+        <!-- The only close-up in this starting version: ↓ returns to the room -->
+        <div id="room-door-detail" class="room" aria-hidden="true">
+          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Close-up of the iron door">
+            <defs>
+              <linearGradient id="detailIron" x2="1" y2="1"><stop stop-color="#3d3930"/><stop offset=".52" stop-color="#191b1c"/><stop offset="1" stop-color="#29231b"/></linearGradient>
+              <radialGradient id="detailGlow"><stop stop-color="#e59832" stop-opacity=".32"/><stop offset="1" stop-color="#e59832" stop-opacity="0"/></radialGradient>
+              <radialGradient id="detailShade"><stop offset=".5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".7"/></radialGradient>
+            </defs>
+            <rect width="1000" height="600" fill="#0c0908"/>
+            <rect x="80" width="840" height="600" fill="#22170d"/>
+            <circle cx="500" cy="280" r="430" fill="url(#detailGlow)"/>
+            <path d="M180 600 V120 Q180 -90 500 -90 Q820 -90 820 120 V600Z" fill="#0c0d0d" stroke="#8e662e" stroke-width="24"/>
+            <path d="M206 600 V128 Q206 -52 500 -52 Q794 -52 794 128 V600Z" fill="url(#detailIron)" stroke="#5e4b33" stroke-width="8"/>
+            <path d="M500 0 V600 M212 370 H788" stroke="#101112" stroke-width="18"/>
+            <path d="M230 375 H770 M228 535 H772" stroke="#926a31" stroke-opacity=".55" stroke-width="4"/>
+            <g fill="#b58c4e">
+              <circle cx="234" cy="138" r="8"/><circle cx="234" cy="288" r="8"/><circle cx="234" cy="450" r="8"/>
+              <circle cx="766" cy="138" r="8"/><circle cx="766" cy="288" r="8"/><circle cx="766" cy="450" r="8"/>
+            </g>
+            <g fill="none" stroke="#c28b3b" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M290 215 L330 152 L370 215 M330 152 V296"/>
+              <path d="M430 153 V292 M430 153 L497 290 M497 153 V292"/>
+              <path d="M570 154 H650 L570 292 H650 M610 154 V292"/>
+              <path d="M315 470 L353 411 L391 470 L353 526Z M610 411 V526 M610 411 L677 469 L610 526"/>
+            </g>
+            <circle cx="666" cy="456" r="51" fill="#19140f" stroke="#bd8740" stroke-width="9"/>
+            <circle cx="666" cy="456" r="29" fill="#11100e" stroke="#725326" stroke-width="4"/>
+            <path d="M666 439 V469 M651 456 H681" stroke="#e8b840" stroke-width="5"/>
+            <circle cx="500" cy="300" r="540" fill="url(#detailShade)"/>
+            <rect class="hotspot" x="260" y="115" width="430" height="210" data-description="The etched runes are precise, but you cannot yet read them." role="button" tabindex="0" aria-label="Inspect the close-up runes"/>
+            <circle class="hotspot" cx="666" cy="456" r="55" data-description="The lock has a brass fitting. Nothing you have can turn it yet." role="button" tabindex="0" aria-label="Inspect the door lock"/>
+          </svg>
+        </div>
+
+        <nav class="view-nav" aria-label="Room views">
+          <button id="turn-left" class="view-nav-button" type="button" aria-label="Turn to the left view" onclick="turnView(-1)">←</button>
+          <button id="go-back" class="view-nav-button" type="button" aria-label="Return from close-up to the room" onclick="goBack()" hidden>↓</button>
+          <button id="turn-right" class="view-nav-button" type="button" aria-label="Turn to the right view" onclick="turnView(1)">→</button>
+        </nav>
 
       </div><!-- /.room-viewport -->
 
@@ -340,14 +380,20 @@
       </div>
     </div>
 
-    <nav class="view-nav" aria-label="Room views">
-      <button id="turn-left" class="view-nav-button" type="button" aria-label="Turn to the left view" onclick="turnView(-1)">←</button>
-      <button id="go-back" class="view-nav-button" type="button" aria-label="Return to the previous view" onclick="goBack()" disabled>↓</button>
-      <button id="turn-right" class="view-nav-button" type="button" aria-label="Turn to the right view" onclick="turnView(1)">→</button>
-    </nav>
+    <aside class="inventory-bar" aria-label="Inventory">
+      <span class="inventory-name">INVENTORY</span>
+      <div class="inventory-slots" aria-hidden="true">
+        <span class="inventory-slot"></span>
+        <span class="inventory-slot"></span>
+        <span class="inventory-slot"></span>
+        <span class="inventory-slot"></span>
+        <span class="inventory-slot"></span>
+      </div>
+      <span class="inventory-empty">Nothing collected yet</span>
+    </aside>
 
   </div><!-- /#game-screen -->
 
-  <script src="game.js?v=11"></script>
+  <script src="game.js?v=12"></script>
 </body>
 </html>

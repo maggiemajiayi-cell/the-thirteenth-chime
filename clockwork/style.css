@@ -835,13 +835,25 @@ html, body {
   max-width: 440px;
 }
 .inventory-slot {
-  display: block;
+  display: grid;
+  place-items: center;
   width: 62px;
   height: 54px;
   border: 1px solid rgba(200,144,10,.38);
   background: rgba(0,0,0,.28);
+  color: var(--brass-light);
   box-shadow: inset 0 0 12px rgba(0,0,0,.5);
 }
+button.inventory-slot:not(:disabled) { cursor: pointer; }
+button.inventory-slot.selected,
+button.inventory-slot:not(:disabled):hover,
+button.inventory-slot:focus-visible {
+  border-color: var(--brass-light);
+  background: rgba(200,144,10,.18);
+  outline: 2px solid var(--brass-light);
+  outline-offset: 2px;
+}
+#inventory-key-icon { width: 48px; height: 35px; }
 .inventory-empty {
   color: var(--text-dim);
   font-family: var(--font-body);
@@ -856,6 +868,27 @@ html, body {
 }
 .hotspot[data-action="zoom-door"] {
   cursor: zoom-in;
+}
+.hotspot[data-action="zoom-drawer"] { cursor: zoom-in; }
+.puzzle-hidden { display: none !important; }
+.puzzle-wheel, .drawer-key { cursor: pointer; }
+.puzzle-wheel:hover > rect:first-child,
+.puzzle-wheel:focus-visible > rect:first-child {
+  stroke: var(--brass-light);
+  stroke-width: 5;
+}
+.drawer-key:hover, .drawer-key:focus-visible {
+  filter: drop-shadow(0 0 10px var(--brass-light));
+}
+.lock-rattle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lock-rattle .35s ease-out;
+}
+@keyframes lock-rattle {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
 }
 @media (max-width: 600px) {
   .hud { padding: 0 12px; }

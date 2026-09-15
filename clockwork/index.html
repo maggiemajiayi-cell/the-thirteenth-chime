@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clockmaker's Curse — Room Escape</title>
   <meta name="description" content="Explore a Victorian clockwork workshop through fixed first-person views. Click to inspect and find a way out." />
-  <link rel="stylesheet" href="style.css?v=12" />
+  <link rel="stylesheet" href="style.css?v=13" />
 </head>
 <body>
 
@@ -242,6 +242,7 @@
               <text x="557" y="174" text-anchor="start"  font-size="9" fill="#7a5008" font-family="serif">III</text>
               <text x="500" y="234" text-anchor="middle" font-size="9" fill="#7a5008" font-family="serif">VI</text>
               <text x="436" y="174" text-anchor="end"    font-size="9" fill="#7a5008" font-family="serif">IX</text>
+              <text x="500" y="205" text-anchor="middle" font-size="15" fill="#e8b840" font-family="monospace" letter-spacing="2">11:58</text>
             </g>
 
             <!-- Iron door visible at the edge of the front view -->
@@ -258,10 +259,7 @@
             <!-- Vignette -->
             <rect width="1000" height="600" fill="url(#vignette)"/>
 
-            <rect class="hotspot" x="425" y="102" width="150" height="140" data-description="The hands have stopped just before midnight." role="button" tabindex="0" aria-label="Inspect the wall clock"/>
-            <rect class="hotspot" x="460" y="242" width="80" height="143" data-description="The pendulum swings with a slow, heavy rhythm." role="button" tabindex="0" aria-label="Inspect the pendulum"/>
-            <ellipse class="hotspot" cx="500" cy="495" rx="190" ry="58" data-description="A circular brass platform sits beneath the pendulum. Its teeth are worn smooth." role="button" tabindex="0" aria-label="Inspect the gear platform"/>
-            <rect class="hotspot" x="760" y="145" width="160" height="290" data-action="zoom-door" data-description="An iron door is covered in strange runes. It is firmly locked." role="button" tabindex="0" aria-label="Look closely at the iron door"/>
+            <rect class="hotspot" x="760" y="145" width="160" height="290" data-action="zoom-door" role="button" tabindex="0" aria-label="Look closely at the iron door"/>
           </svg>
         </div>
 
@@ -303,8 +301,59 @@
             <path d="M169 380 H257 M169 410 H257" stroke="#ad7b35" stroke-opacity=".5" stroke-width="2"/>
             <circle cx="220" cy="400" r="8" fill="#ad7b35"/>
             <circle cx="500" cy="300" r="500" fill="url(#leftShade)"/>
-            <circle class="hotspot" cx="410" cy="240" r="173" data-description="The largest gear turns only a fraction each time the pendulum passes." role="button" tabindex="0" aria-label="Inspect the large brass gear"/>
-            <rect class="hotspot" x="145" y="362" width="138" height="82" data-description="The workbench drawer is stuck. Dust gathers around its brass pull." role="button" tabindex="0" aria-label="Inspect the workbench drawer"/>
+            <rect class="hotspot" x="145" y="362" width="138" height="82" data-action="zoom-drawer" role="button" tabindex="0" aria-label="Look closely at the workbench drawer"/>
+          </svg>
+        </div>
+
+        <!-- The workbench drawer is a physical four-wheel combination lock. -->
+        <div id="room-drawer-detail" class="room" aria-hidden="true">
+          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Close-up of the workbench drawer and its four number wheels">
+            <defs>
+              <linearGradient id="drawerWood" x2="0" y2="1"><stop stop-color="#432a15"/><stop offset=".55" stop-color="#26180d"/><stop offset="1" stop-color="#120c08"/></linearGradient>
+              <radialGradient id="drawerLamp"><stop stop-color="#efaa4d" stop-opacity=".28"/><stop offset="1" stop-color="#efaa4d" stop-opacity="0"/></radialGradient>
+            </defs>
+            <rect width="1000" height="600" fill="#0c0806"/>
+            <circle cx="500" cy="280" r="450" fill="url(#drawerLamp)"/>
+            <path d="M0 112 H1000 V600 H0Z" fill="url(#drawerWood)" stroke="#765022" stroke-width="12"/>
+            <path d="M0 144 H1000 M0 555 H1000" stroke="#a37032" stroke-opacity=".5" stroke-width="5"/>
+            <rect x="174" y="195" width="652" height="322" rx="18" fill="#16100b" stroke="#aa7733" stroke-width="9"/>
+            <rect x="200" y="220" width="600" height="270" rx="10" fill="#26180d" stroke="#60401d" stroke-width="4"/>
+            <text x="500" y="256" text-anchor="middle" fill="#c69a56" font-size="20" font-family="serif" letter-spacing="5">THE CLOCK REMEMBERS</text>
+            <path d="M290 275 H710" stroke="#765326" stroke-width="2"/>
+            <g id="drawer-closed-plate">
+              <rect x="276" y="290" width="448" height="122" rx="8" fill="#0b0d0d" stroke="#b78b48" stroke-width="7"/>
+              <g class="puzzle-wheel" data-wheel="0" role="button" tabindex="0" aria-label="First digit: 0. Click to advance">
+                <rect x="307" y="302" width="78" height="98" rx="5" fill="#252520" stroke="#9e783b" stroke-width="3"/>
+                <text x="346" y="370" text-anchor="middle" fill="#efc36b" font-family="monospace" font-size="54">0</text>
+                <rect x="307" y="302" width="78" height="98" fill="transparent"/>
+              </g>
+              <g class="puzzle-wheel" data-wheel="1" role="button" tabindex="0" aria-label="Second digit: 0. Click to advance">
+                <rect x="409" y="302" width="78" height="98" rx="5" fill="#252520" stroke="#9e783b" stroke-width="3"/>
+                <text x="448" y="370" text-anchor="middle" fill="#efc36b" font-family="monospace" font-size="54">0</text>
+                <rect x="409" y="302" width="78" height="98" fill="transparent"/>
+              </g>
+              <g class="puzzle-wheel" data-wheel="2" role="button" tabindex="0" aria-label="Third digit: 0. Click to advance">
+                <rect x="511" y="302" width="78" height="98" rx="5" fill="#252520" stroke="#9e783b" stroke-width="3"/>
+                <text x="550" y="370" text-anchor="middle" fill="#efc36b" font-family="monospace" font-size="54">0</text>
+                <rect x="511" y="302" width="78" height="98" fill="transparent"/>
+              </g>
+              <g class="puzzle-wheel" data-wheel="3" role="button" tabindex="0" aria-label="Fourth digit: 0. Click to advance">
+                <rect x="613" y="302" width="78" height="98" rx="5" fill="#252520" stroke="#9e783b" stroke-width="3"/>
+                <text x="652" y="370" text-anchor="middle" fill="#efc36b" font-family="monospace" font-size="54">0</text>
+                <rect x="613" y="302" width="78" height="98" fill="transparent"/>
+              </g>
+              <path d="M500 426 L485 445 H515Z" fill="#b58a43"/>
+            </g>
+            <g id="drawer-open-tray" class="puzzle-hidden">
+              <rect x="245" y="286" width="510" height="153" rx="8" fill="#080705" stroke="#a57936" stroke-width="6"/>
+              <path d="M260 303 H740 M260 424 H740" stroke="#7a5626" stroke-width="3"/>
+              <g id="drawer-key" class="drawer-key" data-action="take-key" role="button" tabindex="0" aria-label="Take the brass door key">
+                <circle cx="451" cy="365" r="34" fill="none" stroke="#e8b840" stroke-width="12"/>
+                <path d="M484 365 H603 V384 H576 V401 H551 V384 H484" fill="#b88a38" stroke="#efc36b" stroke-width="5" stroke-linejoin="round"/>
+                <rect x="405" y="320" width="230" height="92" fill="transparent"/>
+              </g>
+            </g>
+            <circle cx="500" cy="300" r="650" fill="none" stroke="#000" stroke-width="180" opacity=".3"/>
           </svg>
         </div>
 
@@ -347,12 +396,16 @@
             <path d="M576 377 H600 M588 365 V389" stroke="#e8b840" stroke-width="4"/>
             <path d="M290 471 H710" stroke="#a87531" stroke-width="9"/>
             <circle cx="500" cy="290" r="550" fill="url(#doorShade)"/>
-            <path class="hotspot" d="M346 462 V207 Q346 98 500 98 Q654 98 654 207 V462Z" data-action="zoom-door" data-description="The heavy iron door will not budge. Its runes glow faintly in the lamplight." role="button" tabindex="0" aria-label="Look closely at the locked iron door"/>
+            <g id="door-open-view" class="puzzle-hidden" pointer-events="none">
+              <path d="M346 462 V207 Q346 98 500 98 Q654 98 654 207 V462Z" fill="#050403" stroke="#bd8740" stroke-width="7"/>
+              <path d="M654 123 L760 96 V462 H654Z" fill="#292620" stroke="#a57936" stroke-width="5"/>
+            </g>
+            <path class="hotspot" d="M346 462 V207 Q346 98 500 98 Q654 98 654 207 V462Z" data-action="zoom-door" role="button" tabindex="0" aria-label="Look closely at the locked iron door"/>
             <rect class="hotspot" x="380" y="140" width="240" height="215" data-action="zoom-door" role="button" tabindex="0" aria-label="Look closely at the door runes"/>
           </svg>
         </div>
 
-        <!-- The only close-up in this starting version: ↓ returns to the room -->
+        <!-- ↓ returns from either close-up to its room view. -->
         <div id="room-door-detail" class="room" aria-hidden="true">
           <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Close-up of the iron door">
             <defs>
@@ -377,12 +430,22 @@
               <path d="M570 154 H650 L570 292 H650 M610 154 V292"/>
               <path d="M315 470 L353 411 L391 470 L353 526Z M610 411 V526 M610 411 L677 469 L610 526"/>
             </g>
-            <circle cx="666" cy="456" r="51" fill="#19140f" stroke="#bd8740" stroke-width="9"/>
-            <circle cx="666" cy="456" r="29" fill="#11100e" stroke="#725326" stroke-width="4"/>
-            <path d="M666 439 V469 M651 456 H681" stroke="#e8b840" stroke-width="5"/>
+            <g id="door-lock-visual">
+              <circle cx="666" cy="456" r="51" fill="#19140f" stroke="#bd8740" stroke-width="9"/>
+              <circle cx="666" cy="456" r="29" fill="#11100e" stroke="#725326" stroke-width="4"/>
+              <path d="M666 439 V469 M651 456 H681" stroke="#e8b840" stroke-width="5"/>
+            </g>
             <circle cx="500" cy="300" r="540" fill="url(#detailShade)"/>
-            <rect class="hotspot" x="260" y="115" width="430" height="210" data-description="The etched runes are precise, but you cannot yet read them." role="button" tabindex="0" aria-label="Inspect the close-up runes"/>
-            <circle class="hotspot" cx="666" cy="456" r="55" data-description="The lock has a brass fitting. Nothing you have can turn it yet." role="button" tabindex="0" aria-label="Inspect the door lock"/>
+            <g id="door-open-detail" class="puzzle-hidden" pointer-events="none">
+              <path d="M206 600 V128 Q206 -52 500 -52 Q794 -52 794 128 V600Z" fill="#040403" stroke="#e0a64a" stroke-width="11"/>
+              <circle cx="500" cy="256" r="145" fill="#ad5d19" opacity=".08"/>
+              <circle cx="500" cy="256" r="74" fill="none" stroke="#a16c28" stroke-width="11" stroke-dasharray="17 10" opacity=".3"/>
+              <path d="M500 182 V330 M426 256 H574 M448 204 L552 308 M552 204 L448 308" stroke="#916025" stroke-width="5" opacity=".23"/>
+              <circle cx="500" cy="256" r="10" fill="#b1742e" opacity=".42"/>
+              <path d="M355 600 L470 456 H530 L645 600Z" fill="#1e120a" stroke="#6d421d" stroke-width="5" opacity=".7"/>
+              <path d="M794 54 L943 4 V600 H794Z" fill="url(#detailIron)" stroke="#86622c" stroke-width="9"/>
+            </g>
+            <circle id="door-lock-hotspot" class="hotspot" cx="666" cy="456" r="55" data-action="unlock-door" role="button" tabindex="0" aria-label="Use a selected item on the door lock"/>
           </svg>
         </div>
 
@@ -398,18 +461,23 @@
 
     <aside class="inventory-bar" aria-label="Inventory">
       <span class="inventory-name">INVENTORY</span>
-      <div class="inventory-slots" aria-hidden="true">
-        <span class="inventory-slot"></span>
+      <div class="inventory-slots">
+        <button id="inventory-key" class="inventory-slot" type="button" aria-label="Brass door key" aria-pressed="false" disabled>
+          <svg id="inventory-key-icon" class="puzzle-hidden" viewBox="0 0 58 38" aria-hidden="true">
+            <circle cx="15" cy="19" r="9" fill="none" stroke="currentColor" stroke-width="5"/>
+            <path d="M24 19 H51 V25 H43 V31 H36 V25 H24" fill="currentColor"/>
+          </svg>
+        </button>
         <span class="inventory-slot"></span>
         <span class="inventory-slot"></span>
         <span class="inventory-slot"></span>
         <span class="inventory-slot"></span>
       </div>
-      <span class="inventory-empty">Nothing collected yet</span>
+      <span id="inventory-label" class="inventory-empty">Nothing collected yet</span>
     </aside>
 
   </div><!-- /#game-screen -->
 
-  <script src="game.js?v=14"></script>
+  <script src="game.js?v=15"></script>
 </body>
 </html>

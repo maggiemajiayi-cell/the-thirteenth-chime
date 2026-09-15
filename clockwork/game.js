@@ -1,4 +1,4 @@
-/* Clockmaker's Curse: fixed-view point-and-click starting version. */
+/* Clockmaker's Curse: fixed-view room escape with a first playable lock. */
 const views = [
   { id: 'gears', name: 'Gear Wall' },
   { id: 'workshop', name: 'The Workshop' },
@@ -7,8 +7,13 @@ const views = [
 
 const game = {
   currentView: 1,
-  doorCloseUp: false,
+  closeUp: null,
   transitioning: false,
+  drawerDigits: [0, 0, 0, 0],
+  drawerOpen: false,
+  keyCollected: false,
+  keySelected: false,
+  doorUnlocked: false,
 };
 
 const fade = document.getElementById('scene-fade');
@@ -80,32 +85,37 @@ function showScreen(id) {
 
 function displayView(index) {
   game.currentView = index;
-  game.doorCloseUp = false;
+  game.closeUp = null;
   renderView();
 }
 
 function renderView() {
   views.forEach((view, viewIndex) => {
     const element = document.getElementById('room-' + view.id);
-    const active = !game.doorCloseUp && viewIndex === game.currentView;
+    const active = !game.closeUp && viewIndex === game.currentView;
     element.classList.toggle('active-room', active);
     element.setAttribute('aria-hidden', String(!active));
   });
-  const closeUp = document.getElementById('room-door-detail');
-  closeUp.classList.toggle('active-room', game.doorCloseUp);
-  closeUp.setAttribute('aria-hidden', String(!game.doorCloseUp));
-  document.getElementById('hud-room').textContent = game.doorCloseUp
-    ? 'Iron Door · Close-up'
-    : views[game.currentView].name;
-  document.getElementById('go-back').hidden = !game.doorCloseUp;
-  document.getElementById('turn-left').hidden = game.doorCloseUp;
-  document.getElementById('turn-right').hidden = game.doorCloseUp;
+  ['door', 'drawer'].forEach(detail => {
+    const element = document.getElementById('room-' + detail + '-detail');
+    const active = game.closeUp === detail;
+    element.classList.toggle('active-room', active);
+    element.setAttribute('aria-hidden', String(!active));
+  });
+  document.getElementById('hud-room').textContent = game.closeUp === 'drawer'
+    ? 'Workbench · Drawer'
+    : game.closeUp === 'door'
+      ? game.doorUnlocked ? 'Iron Door · Open' : 'Iron Door · Lock'
+      : game.currentView === 2 && game.doorUnlocked ? 'Iron Door · Open' : views[game.currentView].name;
+  document.getElementById('go-back').hidden = !game.closeUp;
+  document.getElementById('turn-left').hidden = !!game.closeUp;
+  document.getElementById('turn-right').hidden = !!game.closeUp;
 }
 
 function startGame() {
   if (game.transitioning) return;
   game.transitioning = true;
-  game.doorCloseUp = false;
+  game.closeUp = null;
   closeVolumePanel();
   fade.classList.add('visible');
 
@@ -143,35 +153,115 @@ introVideo.addEventListener('ended', finishIntro);
 introVideo.addEventListener('error', finishIntro);
 
 function turnView(direction) {
-  if (game.transitioning || game.doorCloseUp || !document.getElementById('game-screen').classList.contains('active')) return;
+  if (game.transitioning || game.closeUp || !document.getElementById('game-screen').classList.contains('active')) return;
   displayView((game.currentView + direction + views.length) % views.length);
 }
 
 function goBack() {
-  if (game.transitioning || !game.doorCloseUp) return;
-  game.doorCloseUp = false;
+  if (game.transitioning || !game.closeUp) return;
+  game.closeUp = null;
   renderView();
 }
 
 function lookAtDoor() {
-  if (game.transitioning || game.doorCloseUp) return;
-  game.doorCloseUp = true;
+  if (game.transitioning || game.closeUp) return;
+  game.closeUp = 'door';
   renderView();
 }
 
-document.querySelectorAll('.hotspot').forEach(hotspot => {
-  const inspect = () => {
-    if (hotspot.dataset.action === 'zoom-door') lookAtDoor();
+function lookAtDrawer() {
+  if (game.transitioning || game.closeUp || game.currentView !== 0) return;
+  game.closeUp = 'drawer';
+  renderView();
+}
+
+function openDrawer() {
+  game.drawerOpen = true;
+  document.getElementById('drawer-closed-plate').classList.add('puzzle-hidden');
+  document.getElementById('drawer-open-tray').classList.remove('puzzle-hidden');
+}
+
+document.querySelectorAll('.puzzle-wheel').forEach(wheel => {
+  const advance = () => {
+    if (game.transitioning || game.closeUp !== 'drawer' || game.drawerOpen) return;
+    const index = Number(wheel.dataset.wheel);
+    game.drawerDigits[index] = (game.drawerDigits[index] + 1) % 10;
+    wheel.querySelector('text').textContent = String(game.drawerDigits[index]);
+    wheel.setAttribute('aria-label', `Digit ${index + 1}: ${game.drawerDigits[index]}. Click to advance`);
+    if (game.drawerDigits.join('') === '1158') openDrawer();
   };
-  hotspot.addEventListener('click', inspect);
+  wheel.addEventListener('click', advance);
+  wheel.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      advance();
+    }
+  });
+});
+
+const inventoryKey = document.getElementById('inventory-key');
+function renderInventory() {
+  inventoryKey.disabled = !game.keyCollected;
+  inventoryKey.classList.toggle('selected', game.keySelected);
+  inventoryKey.setAttribute('aria-pressed', String(game.keySelected));
+  document.getElementById('inventory-key-icon').classList.toggle('puzzle-hidden', !game.keyCollected);
+  document.getElementById('inventory-label').textContent = game.keyCollected
+    ? game.keySelected ? 'Brass key · selected' : 'Brass key · click to select'
+    : 'Nothing collected yet';
+}
+
+inventoryKey.addEventListener('click', () => {
+  if (!game.keyCollected) return;
+  game.keySelected = !game.keySelected;
+  renderInventory();
+});
+
+function takeKey() {
+  if (game.transitioning || game.closeUp !== 'drawer' || !game.drawerOpen || game.keyCollected) return;
+  game.keyCollected = true;
+  document.getElementById('drawer-key').classList.add('puzzle-hidden');
+  renderInventory();
+}
+
+function unlockDoor() {
+  if (game.transitioning || game.closeUp !== 'door' || game.doorUnlocked) return;
+  if (!game.keySelected) {
+    const lock = document.getElementById('door-lock-visual');
+    lock.classList.remove('lock-rattle');
+    void lock.getBoundingClientRect();
+    lock.classList.add('lock-rattle');
+    return;
+  }
+  game.doorUnlocked = true;
+  game.keySelected = false;
+  document.getElementById('door-open-view').classList.remove('puzzle-hidden');
+  document.getElementById('door-open-detail').classList.remove('puzzle-hidden');
+  document.getElementById('door-lock-hotspot').classList.add('puzzle-hidden');
+  renderInventory();
+  renderView();
+}
+
+document.querySelectorAll('[data-action]').forEach(hotspot => {
+  const interact = () => {
+    switch (hotspot.dataset.action) {
+      case 'zoom-door': lookAtDoor(); break;
+      case 'zoom-drawer': lookAtDrawer(); break;
+      case 'take-key': takeKey(); break;
+      case 'unlock-door': unlockDoor(); break;
+    }
+  };
+  hotspot.addEventListener('click', interact);
   hotspot.addEventListener('keydown', event => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      inspect();
+      interact();
     }
   });
 });
 
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') closeVolumePanel();
+  if (event.key === 'Escape') {
+    closeVolumePanel();
+    goBack();
+  }
 });

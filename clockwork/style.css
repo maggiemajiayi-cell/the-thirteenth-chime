@@ -784,3 +784,89 @@ html, body {
   margin-top: 8px;
 }
 @keyframes fade-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Fixed-view starting version */
+.scene-fade {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #050403;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 240ms ease;
+}
+.scene-fade.visible { opacity: 1; }
+
+.landing-content {
+  max-height: 100vh;
+  overflow-y: auto;
+}
+.tagline { margin-bottom: 28px; }
+.hint-text { color: rgba(232,184,64,.55); }
+
+.view-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  height: 74px;
+  flex-shrink: 0;
+  background: #090705;
+  border-top: 1px solid rgba(200,144,10,.4);
+}
+.view-nav-button {
+  width: 64px;
+  height: 50px;
+  border: 1px solid rgba(200,144,10,.55);
+  background: linear-gradient(#251b0e, #120c06);
+  color: var(--brass-light);
+  font-family: var(--font-mono);
+  font-size: 1.9rem;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background .18s, border-color .18s;
+}
+.view-nav-button:hover:not(:disabled),
+.view-nav-button:focus-visible {
+  background: #3b2910;
+  border-color: var(--brass-light);
+  outline: 2px solid var(--brass-light);
+  outline-offset: 2px;
+}
+.view-nav-button:disabled {
+  opacity: .36;
+  cursor: default;
+}
+.hotspot {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 3;
+  cursor: pointer;
+  pointer-events: all;
+}
+.hotspot:hover,
+.hotspot:focus-visible {
+  fill: rgba(232,184,64,.13);
+  stroke: rgba(232,184,64,.8);
+  outline: none;
+}
+.dialogue-box {
+  bottom: 74px;
+  right: 0;
+}
+.dialogue-box.hidden {
+  visibility: hidden;
+}
+@media (max-width: 600px) {
+  .hud { padding: 0 12px; }
+  .view-nav { gap: 12px; height: 68px; }
+  .view-nav-button { width: 58px; height: 46px; }
+  .dialogue-box { bottom: 68px; }
+  .dialogue-inner { padding: 12px 16px; }
+  .game-title { font-size: clamp(2.6rem, 10vw, 4rem); }
+  .clock-emblem { margin-bottom: 16px; width: 70px; height: 70px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-fade { transition: none; }
+}

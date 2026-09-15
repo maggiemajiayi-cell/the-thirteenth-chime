@@ -3,20 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Thirteenth Chime — Escape Game</title>
-  <meta name="description" content="You wake on a gearwork table. The pendulum swings above you. Escape before time stops — forever." />
-  <link rel="stylesheet" href="style.css?v=7" />
+  <title>Clockmaker's Curse — Room Escape</title>
+  <meta name="description" content="Explore a Victorian clockwork workshop through fixed first-person views. Click to inspect and find a way out." />
+  <link rel="stylesheet" href="style.css?v=8" />
 </head>
 <body>
 
-  <!-- Global soundtrack: browsers that block audible autoplay will start it
-       on the visitor's first interaction instead. -->
-  <audio id="bgm" src="sound1-browser.wav?v=3" autoplay loop preload="auto"></audio>
-
-  <!-- Opening cinematic shown after the player enters the shop. -->
-  <div id="intro-video-overlay" class="intro-video-overlay is-hidden" aria-hidden="true">
-    <video id="intro-video" src="mpstart.mp4?v=3" preload="auto" playsinline muted></video>
-  </div>
+  <audio id="bgm" src="sound1-browser.wav" loop preload="none"></audio>
+  <div id="scene-fade" class="scene-fade" aria-hidden="true"></div>
 
   <!-- ========== LANDING SCREEN ========== -->
   <div id="landing-screen" class="screen active">
@@ -62,21 +56,20 @@
 
       <p class="subtitle-top">⚙ &nbsp; An Escape Room Experience &nbsp; ⚙</p>
 
-      <h1 class="game-title">The Thirteenth<br/>Chime</h1>
+      <h1 class="game-title">Clockmaker's<br/>Curse</h1>
       <p class="game-subtitle">A Story of Gears &amp; Souls</p>
 
       <p class="tagline">
-        You wake on a brass gearwork table.<br/>
-        The walls breathe with the turning of ten thousand teeth.<br/>
-        A pendulum swings above you — patient, deliberate.<br/>
-        <em>Something here is waiting to be wound up.</em>
+        Beyond the iron door, a clockwork workshop waits.<br/>
+        Its pendulum keeps time for something unseen.<br/>
+        <em>Look closely. Every corner has a story.</em>
       </p>
 
-      <button id="start-btn" class="btn-primary" onclick="playIntro()">
-        <span>⚙ &nbsp; ENTER THE SHOP</span>
+      <button id="start-btn" class="btn-primary" type="button" onclick="startGame()">
+        <span>START</span>
       </button>
 
-      <p class="hint-text">⌨ Keyboard &amp; Mouse &nbsp;|&nbsp; 🖥 Desktop Recommended</p>
+      <p class="hint-text">Point and click &nbsp;·&nbsp; Fixed room views</p>
 
     </div>
   </div>
@@ -87,35 +80,11 @@
     <!-- HUD -->
     <div class="hud">
       <div class="hud-left">
-        <span class="hud-label">LOCATION</span>
+        <span class="hud-label">VIEW</span>
         <span id="hud-room">The Workshop</span>
       </div>
       <div class="hud-center"></div>
-      <div class="hud-right">
-        <div id="volume-control" class="volume-control">
-          <button id="volume-toggle" class="volume-toggle" type="button"
-            aria-label="Adjust volume" aria-expanded="false" aria-controls="volume-panel">
-            <span id="volume-icon" class="volume-icon" data-level="25" aria-hidden="true">
-              <svg viewBox="0 0 32 32" focusable="false">
-                <path class="speaker-cone" d="M6.5 13h4.2l5.8-5v16l-5.8-5H6.5z" />
-                <path class="sound-wave wave-one" d="M20 12.2c1.2 1 1.8 2.2 1.8 3.8S21.2 18.8 20 19.8" />
-                <path class="sound-wave wave-two" d="M23.1 9.2c2.1 1.8 3.1 4 3.1 6.8s-1 5-3.1 6.8" />
-                <path class="sound-wave wave-three" d="M26 6.8c3 2.5 4.5 5.6 4.5 9.2S29 22.7 26 25.2" />
-                <path class="mute-slash" d="M7 7l18 18" />
-              </svg>
-            </span>
-          </button>
-          <div id="volume-panel" class="volume-panel is-hidden" role="group" aria-label="BGM volume">
-            <div class="volume-scale" aria-hidden="true"></div>
-            <button class="volume-mark" type="button" data-volume="0" aria-label="Volume 0 percent"><span></span><b>0</b></button>
-            <button class="volume-mark" type="button" data-volume="25" aria-label="Volume 25 percent"><span></span><b>25</b></button>
-            <button class="volume-mark" type="button" data-volume="50" aria-label="Volume 50 percent"><span></span><b>50</b></button>
-            <button class="volume-mark" type="button" data-volume="75" aria-label="Volume 75 percent"><span></span><b>75</b></button>
-            <button class="volume-mark" type="button" data-volume="100" aria-label="Volume 100 percent"><span></span><b>100</b></button>
-          </div>
-        </div>
-        <button class="hud-btn" onclick="openNotes()">📋 &nbsp;JOURNAL</button>
-      </div>
+      <div class="hud-right"><button id="sound-toggle" class="hud-btn" type="button" onclick="toggleSound()" aria-pressed="true">Sound on</button></div>
     </div>
 
     <!-- GAME BODY: room + sidebar -->
@@ -124,10 +93,10 @@
       <!-- ROOM VIEWPORT -->
       <div class="room-viewport">
 
-        <!-- ROOM 1: THE WORKSHOP (placeholder — more rooms coming) -->
+        <!-- Fixed front view: the main workshop -->
         <div id="room-workshop" class="room active-room">
 
-          <!-- Placeholder SVG: dark empty room with atmosphere -->
+          <!-- Existing workshop SVG, expanded with the platform and iron door -->
           <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
             <defs>
               <radialGradient id="centerGlow" cx="50%" cy="55%" r="50%">
@@ -209,21 +178,14 @@
               <line x1="1016" y1="144" x2="824" y2="336" stroke="#5a3a0e" stroke-width="2"/>
             </g>
 
-            <!-- GEARWORK TABLE in center -->
-            <g filter="url(#glow4)">
-              <!-- Table surface -->
-              <ellipse cx="500" cy="420" rx="200" ry="22" fill="#3a2808" stroke="#c8900a" stroke-width="1.5"/>
-              <ellipse cx="500" cy="418" rx="192" ry="17" fill="#2a1e06"/>
-              <!-- Gear pattern on table -->
-              <circle cx="500" cy="418" r="60" fill="none" stroke="#6a4a10" stroke-width="1" opacity="0.5"/>
-              <circle cx="500" cy="418" r="40" fill="none" stroke="#8a6a18" stroke-width="1.5" opacity="0.5"/>
-              <circle cx="500" cy="418" r="8"  fill="#4a3010" stroke="#c8900a" stroke-width="1"/>
-              <!-- Table legs -->
-              <rect x="340" y="438" width="14" height="80" fill="#2a1c06" rx="2"/>
-              <rect x="646" y="438" width="14" height="80" fill="#2a1c06" rx="2"/>
-              <rect x="390" y="440" width="10" height="75" fill="#241806" rx="2"/>
-              <rect x="600" y="440" width="10" height="75" fill="#241806" rx="2"/>
-            </g>
+            <!-- Circular gear platform in the foreground -->
+            <path d="M315 493 L315 550 Q500 590 685 550 L685 493Z" fill="#171006" stroke="#5a3a0e" stroke-width="3"/>
+            <ellipse cx="500" cy="493" rx="188" ry="57" fill="#352309" stroke="#c8900a" stroke-width="5"/>
+            <ellipse cx="500" cy="493" rx="166" ry="47" fill="#211807" stroke="#8a5f06" stroke-width="2"/>
+            <ellipse cx="500" cy="493" rx="125" ry="35" fill="none" stroke="#7a5010" stroke-width="2"/>
+            <ellipse cx="500" cy="493" rx="70" ry="20" fill="none" stroke="#c8900a" stroke-opacity=".7" stroke-width="2"/>
+            <ellipse cx="500" cy="493" rx="18" ry="8" fill="#5a3a0e" stroke="#e8b840" stroke-width="2"/>
+            <path d="M312 493 H688 M500 437 V549 M365 458 L635 529 M635 458 L365 529" stroke="#8a5f06" stroke-opacity=".48" stroke-width="3"/>
 
             <!-- Small gears scattered -->
             <g opacity="0.5">
@@ -255,90 +217,133 @@
               <text x="436" y="174" text-anchor="end"    font-size="9" fill="#7a5008" font-family="serif">IX</text>
             </g>
 
-            <!-- Ambient center glow (lamp/table) -->
+            <!-- Iron door visible at the edge of the front view -->
+            <path d="M767 433 V214 Q767 143 840 143 Q913 143 913 214 V433Z" fill="#151512" stroke="#6c5022" stroke-width="8"/>
+            <path d="M784 426 V218 Q784 161 840 161 Q896 161 896 218 V426Z" fill="#25231f" stroke="#383229" stroke-width="3"/>
+            <path d="M792 217 H888 M793 302 H888 M837 164 V426" stroke="#12110f" stroke-width="7"/>
+            <circle cx="870" cy="334" r="9" fill="#81602a" stroke="#d1a94f" stroke-width="2"/>
+            <path d="M818 243 L827 230 L836 243 L827 254Z M850 243 L859 230 L868 243 L859 254Z" fill="none" stroke="#bd842f" stroke-width="2"/>
+            <path d="M818 265 L836 265 M850 265 L868 265" stroke="#bd842f" stroke-width="2"/>
+
+            <!-- Ambient center glow -->
             <rect width="1000" height="600" fill="url(#centerGlow)"/>
 
             <!-- Vignette -->
             <rect width="1000" height="600" fill="url(#vignette)"/>
 
-            <!-- Placeholder "coming soon" watermark -->
-            <text x="500" y="500" text-anchor="middle" font-size="11"
-                  fill="rgba(200,144,10,0.18)" font-family="monospace" letter-spacing="3">
-              MORE TO COME — THE GEARS ARE TURNING...
-            </text>
+            <rect class="hotspot" x="425" y="102" width="150" height="140" data-description="The hands have stopped just before midnight." role="button" tabindex="0" aria-label="Inspect the wall clock"/>
+            <rect class="hotspot" x="460" y="242" width="80" height="143" data-description="The pendulum swings with a slow, heavy rhythm." role="button" tabindex="0" aria-label="Inspect the pendulum"/>
+            <ellipse class="hotspot" cx="500" cy="495" rx="190" ry="58" data-description="A circular brass platform sits beneath the pendulum. Its teeth are worn smooth." role="button" tabindex="0" aria-label="Inspect the gear platform"/>
+            <rect class="hotspot" x="760" y="145" width="160" height="290" data-description="An iron door is covered in strange runes. It is firmly locked." role="button" tabindex="0" aria-label="Inspect the iron door"/>
           </svg>
+        </div>
 
-          <!-- Room labels (placeholder) -->
-          <div class="room-labels">
-            <span class="rl" style="left:50%;top:72%">Gearwork Table</span>
-            <span class="rl" style="left:50%;top:34%">Wall Clock</span>
-          </div>
+        <!-- Fixed left view: gear wall and workbench -->
+        <div id="room-gears" class="room" aria-hidden="true">
+          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Left side of the clockwork workshop">
+            <defs>
+              <linearGradient id="leftWall" x2="0" y2="1"><stop stop-color="#090807"/><stop offset=".7" stop-color="#24170b"/><stop offset="1" stop-color="#100b07"/></linearGradient>
+              <radialGradient id="leftLamp"><stop stop-color="#cc7b23" stop-opacity=".36"/><stop offset="1" stop-color="#cc7b23" stop-opacity="0"/></radialGradient>
+              <radialGradient id="leftShade"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".72"/></radialGradient>
+            </defs>
+            <rect width="1000" height="600" fill="url(#leftWall)"/>
+            <polygon points="0,0 165,60 165,420 0,520" fill="#0c0907"/>
+            <polygon points="1000,0 855,65 855,420 1000,520" fill="#110c07"/>
+            <path d="M0 520 L165 420 H855 L1000 520 V600 H0Z" fill="#120c06" stroke="#523414" stroke-width="3"/>
+            <path d="M165 420 L0 600 M855 420 L1000 600 M305 420 L220 600 M695 420 L780 600" stroke="#513515" stroke-opacity=".38" stroke-width="3"/>
+            <path d="M155 60 H860 M165 420 H855" stroke="#78501a" stroke-opacity=".45" stroke-width="5"/>
+            <circle cx="500" cy="260" r="310" fill="url(#leftLamp)"/>
+            <!-- Large brass gears, bolted to the wall -->
+            <g fill="none" stroke="#a87926">
+              <circle cx="410" cy="240" r="174" stroke-width="17" stroke-dasharray="21 8"/>
+              <circle cx="410" cy="240" r="151" stroke-width="8"/>
+              <circle cx="410" cy="240" r="62" stroke-width="10"/>
+              <path d="M410 89 V391 M259 240 H561 M303 133 L517 347 M517 133 L303 347" stroke-width="11"/>
+              <circle cx="410" cy="240" r="25" fill="#3f2a0d" stroke-width="5"/>
+            </g>
+            <g fill="none" stroke="#745019" stroke-opacity=".8">
+              <circle cx="698" cy="300" r="108" stroke-width="13" stroke-dasharray="16 7"/>
+              <circle cx="698" cy="300" r="85" stroke-width="5"/>
+              <path d="M698 216 V384 M614 300 H782 M638 240 L758 360 M758 240 L638 360" stroke-width="8"/>
+              <circle cx="698" cy="300" r="14" fill="#33230e" stroke-width="4"/>
+            </g>
+            <path d="M195 74 H335 V104 H480 M725 83 H800 V387" fill="none" stroke="#614216" stroke-width="12"/>
+            <path d="M195 75 H335 V104 H480 M725 83 H800 V387" fill="none" stroke="#c8900a" stroke-opacity=".55" stroke-width="3"/>
+            <!-- A modest bench keeps this viewpoint distinct -->
+            <path d="M92 431 H318 L347 483 H70Z" fill="#482a13" stroke="#8a5f27" stroke-width="5"/>
+            <path d="M112 482 V565 M306 482 V565" stroke="#3b2512" stroke-width="19"/>
+            <rect x="158" y="366" width="110" height="68" rx="7" fill="#201611" stroke="#8a6232" stroke-width="4"/>
+            <path d="M169 380 H257 M169 410 H257" stroke="#ad7b35" stroke-opacity=".5" stroke-width="2"/>
+            <circle cx="220" cy="400" r="8" fill="#ad7b35"/>
+            <circle cx="500" cy="300" r="500" fill="url(#leftShade)"/>
+            <circle class="hotspot" cx="410" cy="240" r="173" data-description="The largest gear turns only a fraction each time the pendulum passes." role="button" tabindex="0" aria-label="Inspect the large brass gear"/>
+            <rect class="hotspot" x="145" y="362" width="138" height="82" data-description="The workbench drawer is stuck. Dust gathers around its brass pull." role="button" tabindex="0" aria-label="Inspect the workbench drawer"/>
+          </svg>
+        </div>
+
+        <!-- Fixed right view: the rune-covered locked door -->
+        <div id="room-door" class="room" aria-hidden="true">
+          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Iron door side of the clockwork workshop">
+            <defs>
+              <linearGradient id="doorWall" x2="0" y2="1"><stop stop-color="#080707"/><stop offset=".68" stop-color="#27170d"/><stop offset="1" stop-color="#100b08"/></linearGradient>
+              <linearGradient id="ironFace" x2="1" y2="1"><stop stop-color="#302f2c"/><stop offset=".45" stop-color="#161719"/><stop offset="1" stop-color="#34302a"/></linearGradient>
+              <radialGradient id="doorLight"><stop stop-color="#ffae3a" stop-opacity=".4"/><stop offset="1" stop-color="#ffae3a" stop-opacity="0"/></radialGradient>
+              <radialGradient id="doorShade"><stop offset=".5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".75"/></radialGradient>
+            </defs>
+            <rect width="1000" height="600" fill="url(#doorWall)"/>
+            <polygon points="0,0 145,72 145,438 0,540" fill="#0d0908"/>
+            <polygon points="1000,0 855,72 855,438 1000,540" fill="#100b08"/>
+            <path d="M0 540 L145 438 H855 L1000 540 V600 H0Z" fill="#100b07" stroke="#4a2e16" stroke-width="3"/>
+            <path d="M145 438 L0 600 M855 438 L1000 600 M375 438 L310 600 M625 438 L690 600" stroke="#63411b" stroke-opacity=".42" stroke-width="3"/>
+            <circle cx="520" cy="225" r="360" fill="url(#doorLight)"/>
+            <!-- Brass lamps throw warm light over the ironwork -->
+            <path d="M220 30 V157 M780 30 V157" stroke="#5d421e" stroke-width="8"/>
+            <path d="M194 151 H246 L235 186 H205Z M754 151 H806 L795 186 H765Z" fill="#c8900a" stroke="#e8b840" stroke-width="3"/>
+            <circle cx="220" cy="193" r="115" fill="url(#doorLight)"/>
+            <circle cx="780" cy="193" r="115" fill="url(#doorLight)"/>
+            <!-- Iron arch, rivets, lock and abstract etched runes -->
+            <path d="M322 473 V208 Q322 73 500 73 Q678 73 678 208 V473Z" fill="#100d0b" stroke="#92672d" stroke-width="13"/>
+            <path d="M346 462 V207 Q346 98 500 98 Q654 98 654 207 V462Z" fill="url(#ironFace)" stroke="#6b5437" stroke-width="5"/>
+            <path d="M500 101 V463 M351 263 H649 M351 392 H649" stroke="#101112" stroke-width="12"/>
+            <path d="M365 111 Q500 47 635 111" fill="none" stroke="#d0a450" stroke-width="3" stroke-opacity=".7"/>
+            <g fill="#967340">
+              <circle cx="365" cy="220" r="5"/><circle cx="365" cy="300" r="5"/><circle cx="365" cy="430" r="5"/>
+              <circle cx="635" cy="220" r="5"/><circle cx="635" cy="300" r="5"/><circle cx="635" cy="430" r="5"/>
+            </g>
+            <g fill="none" stroke="#c28b3b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M405 192 L427 156 L449 192 M427 156 V223"/>
+              <path d="M474 157 V224 M474 157 L518 223 M518 157 V223"/>
+              <path d="M551 160 L580 160 L551 224 L580 224 M565 160 V224"/>
+              <path d="M433 317 L454 286 L475 317 L454 348Z M527 286 V349 M527 286 L560 317 L527 349"/>
+            </g>
+            <circle cx="588" cy="377" r="28" fill="#221b13" stroke="#bc8740" stroke-width="5"/>
+            <path d="M576 377 H600 M588 365 V389" stroke="#e8b840" stroke-width="4"/>
+            <path d="M290 471 H710" stroke="#a87531" stroke-width="9"/>
+            <circle cx="500" cy="290" r="550" fill="url(#doorShade)"/>
+            <path class="hotspot" d="M346 462 V207 Q346 98 500 98 Q654 98 654 207 V462Z" data-description="The heavy iron door will not budge. Its runes glow faintly in the lamplight." role="button" tabindex="0" aria-label="Inspect the locked iron door"/>
+            <rect class="hotspot" x="380" y="140" width="240" height="215" data-description="The marks repeat in a pattern, but their meaning is still unclear." role="button" tabindex="0" aria-label="Inspect the door runes"/>
+          </svg>
         </div>
 
       </div><!-- /.room-viewport -->
 
-      <!-- RIGHT SIDEBAR: INVENTORY -->
-      <div class="inv-sidebar" id="inv-sidebar">
-        <div class="inv-sidebar-header">
-          <span class="inv-sidebar-title">ITEMS</span>
-        </div>
-        <div class="inv-sidebar-scroll">
-          <div class="inv-sidebar-list" id="inv-sidebar-list">
-            <div class="inv-sidebar-empty" id="inv-sidebar-empty">
-              No items<br/>yet
-            </div>
-          </div>
-        </div>
-        <div class="inv-sidebar-footer" id="inv-sidebar-footer">
-          <div class="inv-footer-icon" id="inv-footer-icon"></div>
-          <div class="inv-footer-name" id="inv-footer-name"></div>
-          <div class="inv-footer-desc" id="inv-footer-desc"></div>
-          <button class="inv-deselect-btn" onclick="cancelUse()">✕ Drop</button>
-        </div>
-      </div>
-
     </div><!-- /.game-body -->
 
-    <!-- DIALOGUE BOX -->
-    <div id="dialogue-box" class="dialogue-box hidden">
+    <div id="dialogue-box" class="dialogue-box hidden" role="status" aria-live="polite">
       <div class="dialogue-inner">
         <p id="dialogue-text"></p>
-        <button class="dialogue-close" onclick="closeDialogue()">✕</button>
+        <button class="dialogue-close" type="button" onclick="closeDialogue()" aria-label="Close description">✕</button>
       </div>
     </div>
 
-    <!-- NOTES MODAL -->
-    <div id="notes-modal" class="modal hidden">
-      <div class="modal-backdrop" onclick="closeNotes()"></div>
-      <div class="modal-box">
-        <h2>📋 Journal</h2>
-        <div id="notes-content" class="notes-content"></div>
-        <br/>
-        <button class="btn-secondary" onclick="closeNotes()">Close</button>
-      </div>
-    </div>
-
-    <!-- PUZZLE MODAL (placeholder) -->
-    <div id="puzzle-modal" class="modal hidden">
-      <div class="modal-backdrop" onclick="closePuzzle()"></div>
-      <div class="modal-box" id="puzzle-content"></div>
-    </div>
+    <nav class="view-nav" aria-label="Room views">
+      <button id="turn-left" class="view-nav-button" type="button" aria-label="Turn to the left view" onclick="turnView(-1)">←</button>
+      <button id="go-back" class="view-nav-button" type="button" aria-label="Return to the previous view" onclick="goBack()" disabled>↓</button>
+      <button id="turn-right" class="view-nav-button" type="button" aria-label="Turn to the right view" onclick="turnView(1)">→</button>
+    </nav>
 
   </div><!-- /#game-screen -->
 
-  <!-- ========== END SCREEN ========== -->
-  <div id="end-screen" class="screen">
-    <div class="end-content">
-      <div class="end-icon">⚙</div>
-      <h1>THE CYCLE ENDS</h1>
-      <p>You look down.<br/>Where your heart should beat — a golden gear spins silently.</p>
-      <p>The door was never an exit.<br/>You were never the repairman.</p>
-      <p class="end-final-line">"It's time for the next cycle."</p>
-      <br/>
-      <button class="btn-primary" onclick="resetGame()"><span>↺ &nbsp; WIND AGAIN</span></button>
-    </div>
-  </div>
-
-  <script src="game.js?v=9"></script>
+  <script src="game.js?v=10"></script>
 </body>
 </html>

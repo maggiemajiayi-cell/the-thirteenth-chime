@@ -1,5 +1,7 @@
-# The Thirteenth Chime
+# Clockmaker's Curse
 
-A browser-based escape room game built with SVG, HTML, CSS, and vanilla JavaScript.
+A point-and-click room escape game built with SVG, HTML, CSS, and vanilla JavaScript.
 
-Enter a workshop where time has slipped beyond the twelve familiar chimes. Inspect clues, collect items, and solve the puzzles before the impossible final bell.
+Open [clockwork/index.html](clockwork/index.html) and click **Start** to enter the workshop. Click objects to inspect them. Use **←** and **→** to turn between fixed first-person views, and **↓** to return to the previous view.
+
+This starting version has no puzzles or inventory yet.

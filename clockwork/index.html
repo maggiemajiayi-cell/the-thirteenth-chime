@@ -5,12 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clockmaker's Curse — Room Escape</title>
   <meta name="description" content="Explore a Victorian clockwork workshop through fixed first-person views. Click to inspect and find a way out." />
-  <link rel="stylesheet" href="style.css?v=8" />
+  <link rel="stylesheet" href="style.css?v=9" />
 </head>
 <body>
 
   <audio id="bgm" src="sound1-browser.wav" loop preload="none"></audio>
   <div id="scene-fade" class="scene-fade" aria-hidden="true"></div>
+  <div id="intro-video-overlay" class="intro-video-overlay is-hidden" aria-hidden="true">
+    <video id="intro-video" src="mpstart.mp4" preload="metadata" playsinline muted></video>
+    <button id="skip-intro" class="intro-skip" type="button" onclick="finishIntro()">Skip intro</button>
+  </div>
 
   <!-- ========== LANDING SCREEN ========== -->
   <div id="landing-screen" class="screen active">
@@ -344,6 +348,6 @@
 
   </div><!-- /#game-screen -->
 
-  <script src="game.js?v=10"></script>
+  <script src="game.js?v=11"></script>
 </body>
 </html>

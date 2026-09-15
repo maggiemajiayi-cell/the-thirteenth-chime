@@ -14,6 +14,10 @@ const game = {
 
 const fade = document.getElementById('scene-fade');
 const bgm = document.getElementById('bgm');
+const introVideo = document.getElementById('intro-video');
+const introOverlay = document.getElementById('intro-video-overlay');
+let introActive = false;
+let introWatchdog = null;
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(screen => {
@@ -43,6 +47,25 @@ function startGame() {
   bgm.volume = 0.25;
   if (game.soundOn) bgm.play().catch(() => {});
   window.setTimeout(() => {
+    introActive = true;
+    introOverlay.classList.remove('is-hidden');
+    introOverlay.setAttribute('aria-hidden', 'false');
+    introVideo.currentTime = 0;
+    introVideo.play().catch(() => finishIntro());
+    introWatchdog = window.setTimeout(finishIntro, 20000);
+    window.setTimeout(() => fade.classList.remove('visible'), 60);
+  }, 240);
+}
+
+function finishIntro() {
+  if (!introActive) return;
+  introActive = false;
+  window.clearTimeout(introWatchdog);
+  introVideo.pause();
+  fade.classList.add('visible');
+  window.setTimeout(() => {
+    introOverlay.classList.add('is-hidden');
+    introOverlay.setAttribute('aria-hidden', 'true');
     displayView(1);
     showScreen('game-screen');
     window.setTimeout(() => fade.classList.remove('visible'), 60);
@@ -52,6 +75,9 @@ function startGame() {
     }, 420);
   }, 240);
 }
+
+introVideo.addEventListener('ended', finishIntro);
+introVideo.addEventListener('error', finishIntro);
 
 function turnView(direction) {
   if (game.transitioning || !document.getElementById('game-screen').classList.contains('active')) return;

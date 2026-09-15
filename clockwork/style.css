@@ -789,13 +789,34 @@ html, body {
 .scene-fade {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: 1200;
   background: #050403;
   opacity: 0;
   pointer-events: none;
   transition: opacity 240ms ease;
 }
 .scene-fade.visible { opacity: 1; }
+.intro-skip {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2;
+  padding: 10px 16px;
+  border: 1px solid rgba(232,184,64,.7);
+  background: rgba(10,8,6,.8);
+  color: var(--brass-light);
+  font: 0.7rem var(--font-mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.intro-skip:hover,
+.intro-skip:focus-visible {
+  border-color: var(--brass-light);
+  background: #2c1e0d;
+  outline: 2px solid var(--brass-light);
+  outline-offset: 2px;
+}
 
 .landing-content {
   max-height: 100vh;

@@ -1,4 +1,4 @@
-/* Clockmaker's Curse: fixed-view room escape with a first playable lock. */
+/* The Thirteenth Chime: fixed-view room escape with a first playable lock. */
 const views = [
   { id: 'gears', name: 'Gear Wall' },
   { id: 'workshop', name: 'The Workshop' },

@@ -270,6 +270,8 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  max-width: 720px;
   gap: 0;
   text-align: center;
   padding: 0 24px;
@@ -330,6 +332,8 @@ html, body {
 }
 
 .game-title {
+  width: 100%;
+  max-width: 100%;
   font-family: var(--font-title);
   font-size: clamp(2.8rem, 6vw, 5rem);
   font-weight: 900;
@@ -350,6 +354,8 @@ html, body {
 }
 
 .game-subtitle {
+  width: 100%;
+  max-width: 100%;
   font-family: var(--font-title);
   font-size: clamp(1rem, 2vw, 1.4rem);
   font-weight: 400;
@@ -360,6 +366,7 @@ html, body {
 }
 
 .tagline {
+  width: 100%;
   font-family: var(--font-body);
   font-size: 1.05rem;
   color: var(--text-dim);
@@ -901,7 +908,8 @@ button.inventory-slot:focus-visible {
   .inventory-slots { gap: 5px; }
   .inventory-slot { flex: 1; min-width: 32px; height: 48px; }
   .inventory-empty { display: none; }
-  .game-title { font-size: clamp(2.6rem, 10vw, 4rem); }
+  .game-title { font-size: clamp(2rem, 9vw, 3rem); letter-spacing: .04em; }
+  .game-subtitle { letter-spacing: .13em; }
   .clock-emblem { margin-bottom: 16px; width: 70px; height: 70px; }
 }
 @media (prefers-reduced-motion: reduce) {

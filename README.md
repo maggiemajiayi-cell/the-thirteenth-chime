@@ -1,4 +1,4 @@
-# Clockmaker's Curse
+# The Thirteenth Chime
 
 A point-and-click room escape game built with SVG, HTML, CSS, and vanilla JavaScript.
 

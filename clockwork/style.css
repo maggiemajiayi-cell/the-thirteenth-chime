@@ -857,24 +857,6 @@ html, body {
 .hotspot[data-action="zoom-door"] {
   cursor: zoom-in;
 }
-.scene-caption {
-  position: absolute;
-  top: 28px;
-  left: 50%;
-  z-index: 55;
-  max-width: min(700px, calc(100% - 40px));
-  margin: 0;
-  color: #e8dcc8;
-  font-family: var(--font-body);
-  font-size: 1.1rem;
-  text-align: center;
-  text-shadow: 0 2px 5px #000, 0 0 16px #000;
-  transform: translateX(-50%);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .2s ease;
-}
-.scene-caption.visible { opacity: 1; }
 @media (max-width: 600px) {
   .hud { padding: 0 12px; }
   .view-nav-button { width: 58px; height: 46px; }
@@ -886,7 +868,6 @@ html, body {
   .inventory-slots { gap: 5px; }
   .inventory-slot { flex: 1; min-width: 32px; height: 48px; }
   .inventory-empty { display: none; }
-  .scene-caption { top: 18px; font-size: .95rem; }
   .game-title { font-size: clamp(2.6rem, 10vw, 4rem); }
   .clock-emblem { margin-bottom: 16px; width: 70px; height: 70px; }
 }

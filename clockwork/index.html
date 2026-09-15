@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clockmaker's Curse — Room Escape</title>
   <meta name="description" content="Explore a Victorian clockwork workshop through fixed first-person views. Click to inspect and find a way out." />
-  <link rel="stylesheet" href="style.css?v=11" />
+  <link rel="stylesheet" href="style.css?v=12" />
 </head>
 <body>
 
@@ -88,7 +88,30 @@
         <span id="hud-room">The Workshop</span>
       </div>
       <div class="hud-center"></div>
-      <div class="hud-right"><button id="sound-toggle" class="hud-btn" type="button" onclick="toggleSound()" aria-pressed="true">Sound on</button></div>
+      <div class="hud-right">
+        <div id="volume-control" class="volume-control">
+          <button id="volume-toggle" class="volume-toggle" type="button"
+            aria-label="Adjust volume" aria-expanded="false" aria-controls="volume-panel">
+            <span id="volume-icon" class="volume-icon" data-level="25" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <path class="speaker-cone" d="M6.5 13h4.2l5.8-5v16l-5.8-5H6.5z" />
+                <path class="sound-wave wave-one" d="M20 12.2c1.2 1 1.8 2.2 1.8 3.8S21.2 18.8 20 19.8" />
+                <path class="sound-wave wave-two" d="M23.1 9.2c2.1 1.8 3.1 4 3.1 6.8s-1 5-3.1 6.8" />
+                <path class="sound-wave wave-three" d="M26 6.8c3 2.5 4.5 5.6 4.5 9.2S29 22.7 26 25.2" />
+                <path class="mute-slash" d="M7 7l18 18" />
+              </svg>
+            </span>
+          </button>
+          <div id="volume-panel" class="volume-panel is-hidden" role="group" aria-label="BGM volume">
+            <div class="volume-scale" aria-hidden="true"></div>
+            <button class="volume-mark" type="button" data-volume="0" aria-label="Volume 0 percent"><span></span><b>0</b></button>
+            <button class="volume-mark" type="button" data-volume="25" aria-label="Volume 25 percent"><span></span><b>25</b></button>
+            <button class="volume-mark" type="button" data-volume="50" aria-label="Volume 50 percent"><span></span><b>50</b></button>
+            <button class="volume-mark" type="button" data-volume="75" aria-label="Volume 75 percent"><span></span><b>75</b></button>
+            <button class="volume-mark" type="button" data-volume="100" aria-label="Volume 100 percent"><span></span><b>100</b></button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- GAME BODY: room + sidebar -->
@@ -325,7 +348,7 @@
             <path d="M290 471 H710" stroke="#a87531" stroke-width="9"/>
             <circle cx="500" cy="290" r="550" fill="url(#doorShade)"/>
             <path class="hotspot" d="M346 462 V207 Q346 98 500 98 Q654 98 654 207 V462Z" data-action="zoom-door" data-description="The heavy iron door will not budge. Its runes glow faintly in the lamplight." role="button" tabindex="0" aria-label="Look closely at the locked iron door"/>
-            <rect class="hotspot" x="380" y="140" width="240" height="215" data-description="The marks repeat in a pattern, but their meaning is still unclear." role="button" tabindex="0" aria-label="Inspect the door runes"/>
+            <rect class="hotspot" x="380" y="140" width="240" height="215" data-action="zoom-door" role="button" tabindex="0" aria-label="Look closely at the door runes"/>
           </svg>
         </div>
 
@@ -368,7 +391,6 @@
           <button id="go-back" class="view-nav-button" type="button" aria-label="Return from close-up to the room" onclick="goBack()" hidden>↓</button>
           <button id="turn-right" class="view-nav-button" type="button" aria-label="Turn to the right view" onclick="turnView(1)">→</button>
         </nav>
-        <p id="scene-caption" class="scene-caption" aria-live="polite"></p>
 
       </div><!-- /.room-viewport -->
 
@@ -388,6 +410,6 @@
 
   </div><!-- /#game-screen -->
 
-  <script src="game.js?v=13"></script>
+  <script src="game.js?v=14"></script>
 </body>
 </html>

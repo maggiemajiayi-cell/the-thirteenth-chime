@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clockmaker's Curse — Room Escape</title>
   <meta name="description" content="Explore a Victorian clockwork workshop through fixed first-person views. Click to inspect and find a way out." />
-  <link rel="stylesheet" href="style.css?v=10" />
+  <link rel="stylesheet" href="style.css?v=11" />
 </head>
 <body>
 
@@ -368,17 +368,11 @@
           <button id="go-back" class="view-nav-button" type="button" aria-label="Return from close-up to the room" onclick="goBack()" hidden>↓</button>
           <button id="turn-right" class="view-nav-button" type="button" aria-label="Turn to the right view" onclick="turnView(1)">→</button>
         </nav>
+        <p id="scene-caption" class="scene-caption" aria-live="polite"></p>
 
       </div><!-- /.room-viewport -->
 
     </div><!-- /.game-body -->
-
-    <div id="dialogue-box" class="dialogue-box hidden" role="status" aria-live="polite">
-      <div class="dialogue-inner">
-        <p id="dialogue-text"></p>
-        <button class="dialogue-close" type="button" onclick="closeDialogue()" aria-label="Close description">✕</button>
-      </div>
-    </div>
 
     <aside class="inventory-bar" aria-label="Inventory">
       <span class="inventory-name">INVENTORY</span>
@@ -394,6 +388,6 @@
 
   </div><!-- /#game-screen -->
 
-  <script src="game.js?v=12"></script>
+  <script src="game.js?v=13"></script>
 </body>
 </html>

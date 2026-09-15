@@ -18,6 +18,7 @@ const introVideo = document.getElementById('intro-video');
 const introOverlay = document.getElementById('intro-video-overlay');
 let introActive = false;
 let introWatchdog = null;
+let captionTimer = null;
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(screen => {
@@ -53,7 +54,7 @@ function startGame() {
   if (game.transitioning) return;
   game.transitioning = true;
   game.doorCloseUp = false;
-  closeDialogue();
+  clearCaption();
   fade.classList.add('visible');
 
   bgm.volume = 0.25;
@@ -83,7 +84,6 @@ function finishIntro() {
     window.setTimeout(() => fade.classList.remove('visible'), 60);
     window.setTimeout(() => {
       game.transitioning = false;
-      showDialogue('The clockwork room waits in silence. Click an object to look closer.');
     }, 420);
   }, 240);
 }
@@ -93,13 +93,13 @@ introVideo.addEventListener('error', finishIntro);
 
 function turnView(direction) {
   if (game.transitioning || game.doorCloseUp || !document.getElementById('game-screen').classList.contains('active')) return;
-  closeDialogue();
+  clearCaption();
   displayView((game.currentView + direction + views.length) % views.length);
 }
 
 function goBack() {
   if (game.transitioning || !game.doorCloseUp) return;
-  closeDialogue();
+  clearCaption();
   game.doorCloseUp = false;
   renderView();
 }
@@ -108,16 +108,23 @@ function lookAtDoor() {
   if (game.transitioning || game.doorCloseUp) return;
   game.doorCloseUp = true;
   renderView();
-  showDialogue('The iron door fills your view. Use ↓ to return to the room.');
+  showCaption('The iron door fills your view. Use ↓ to return to the room.');
 }
 
-function showDialogue(text) {
-  document.getElementById('dialogue-text').textContent = text;
-  document.getElementById('dialogue-box').classList.remove('hidden');
+function showCaption(text) {
+  clearCaption();
+  const caption = document.getElementById('scene-caption');
+  caption.textContent = text;
+  caption.classList.add('visible');
+  captionTimer = window.setTimeout(clearCaption, 5500);
 }
 
-function closeDialogue() {
-  document.getElementById('dialogue-box').classList.add('hidden');
+function clearCaption() {
+  if (captionTimer) window.clearTimeout(captionTimer);
+  captionTimer = null;
+  const caption = document.getElementById('scene-caption');
+  caption.textContent = '';
+  caption.classList.remove('visible');
 }
 
 function toggleSound() {
@@ -134,7 +141,7 @@ function toggleSound() {
 document.querySelectorAll('.hotspot').forEach(hotspot => {
   const inspect = () => {
     if (hotspot.dataset.action === 'zoom-door') lookAtDoor();
-    else showDialogue(hotspot.dataset.description);
+    else showCaption(hotspot.dataset.description);
   };
   hotspot.addEventListener('click', inspect);
   hotspot.addEventListener('keydown', event => {
@@ -146,5 +153,5 @@ document.querySelectorAll('.hotspot').forEach(hotspot => {
 });
 
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') closeDialogue();
+  if (event.key === 'Escape') clearCaption();
 });

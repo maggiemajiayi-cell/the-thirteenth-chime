@@ -224,34 +224,15 @@
               <circle cx="740" cy="380" r="6"  fill="#4a3008"/>
             </g>
 
-            <!-- Clock face on back wall -->
-            <g>
-              <circle cx="500" cy="170" r="65" fill="#0e0c08" stroke="#9a6a0a" stroke-width="3"/>
-              <circle cx="500" cy="170" r="55" fill="none" stroke="#6a4a08" stroke-width="1"/>
-              <!-- Hour marks -->
-              <line x1="500" y1="108" x2="500" y2="118" stroke="#c8900a" stroke-width="2"/>
-              <line x1="500" y1="222" x2="500" y2="232" stroke="#c8900a" stroke-width="2"/>
-              <line x1="438" y1="170" x2="448" y2="170" stroke="#c8900a" stroke-width="2"/>
-              <line x1="552" y1="170" x2="562" y2="170" stroke="#c8900a" stroke-width="2"/>
-              <!-- Clock hands stopped at 11:58 -->
-              <line x1="500" y1="170" x2="480" y2="125" stroke="#e8b840" stroke-width="3" stroke-linecap="round"/>
-              <line x1="500" y1="170" x2="548" y2="152" stroke="#c8900a" stroke-width="2" stroke-linecap="round"/>
-              <circle cx="500" cy="170" r="4" fill="#e8b840"/>
-              <!-- Roman numerals -->
-              <text x="500" y="116" text-anchor="middle" font-size="9" fill="#9a6a0a" font-family="serif">XII</text>
-              <text x="557" y="174" text-anchor="start"  font-size="9" fill="#7a5008" font-family="serif">III</text>
-              <text x="500" y="234" text-anchor="middle" font-size="9" fill="#7a5008" font-family="serif">VI</text>
-              <text x="436" y="174" text-anchor="end"    font-size="9" fill="#7a5008" font-family="serif">IX</text>
-              <text x="500" y="205" text-anchor="middle" font-size="15" fill="#e8b840" font-family="monospace" letter-spacing="2">11:58</text>
+            <!-- Only the lower edge of the oversized wall clock is visible. -->
+            <g aria-label="Stopped clock reads 11:58">
+              <circle cx="770" cy="-70" r="270" fill="#0c0a07" stroke="#9a6a0a" stroke-width="15"/>
+              <circle cx="770" cy="-70" r="242" fill="none" stroke="#5e420e" stroke-width="5"/>
+              <path d="M550 30 L575 21 M616 139 L629 116 M770 178 V153 M911 139 L898 116 M990 30 L965 21" fill="none" stroke="#c8900a" stroke-width="6" stroke-linecap="round"/>
+              <rect x="625" y="54" width="290" height="103" rx="8" fill="#211607" stroke="#ab7b2b" stroke-width="5"/>
+              <rect x="635" y="64" width="270" height="83" rx="3" fill="#110e08" stroke="#5e420e" stroke-width="2"/>
+              <text x="770" y="124" text-anchor="middle" font-size="51" fill="#e8b840" font-family="monospace" letter-spacing="5">11:58</text>
             </g>
-
-            <!-- Iron door visible at the edge of the front view -->
-            <path d="M767 433 V214 Q767 143 840 143 Q913 143 913 214 V433Z" fill="#151512" stroke="#6c5022" stroke-width="8"/>
-            <path d="M784 426 V218 Q784 161 840 161 Q896 161 896 218 V426Z" fill="#25231f" stroke="#383229" stroke-width="3"/>
-            <path d="M792 217 H888 M793 302 H888 M837 164 V426" stroke="#12110f" stroke-width="7"/>
-            <circle cx="870" cy="334" r="9" fill="#81602a" stroke="#d1a94f" stroke-width="2"/>
-            <path d="M818 243 L827 230 L836 243 L827 254Z M850 243 L859 230 L868 243 L859 254Z" fill="none" stroke="#bd842f" stroke-width="2"/>
-            <path d="M818 265 L836 265 M850 265 L868 265" stroke="#bd842f" stroke-width="2"/>
 
             <!-- Ambient center glow -->
             <rect width="1000" height="600" fill="url(#centerGlow)"/>
@@ -259,7 +240,6 @@
             <!-- Vignette -->
             <rect width="1000" height="600" fill="url(#vignette)"/>
 
-            <rect class="hotspot" x="760" y="145" width="160" height="290" data-action="zoom-door" role="button" tabindex="0" aria-label="Look closely at the iron door"/>
           </svg>
         </div>
 

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Thirteenth Chime — Room Escape</title>
   <meta name="description" content="Explore a Victorian clockwork workshop through fixed first-person views. Click to inspect and find a way out." />
-  <link rel="stylesheet" href="style.css?v=14" />
+  <link rel="stylesheet" href="style.css?v=16" />
 </head>
 <body>
 
@@ -213,6 +213,7 @@
             <ellipse cx="500" cy="493" rx="70" ry="20" fill="none" stroke="#c8900a" stroke-opacity=".7" stroke-width="2"/>
             <ellipse cx="500" cy="493" rx="18" ry="8" fill="#5a3a0e" stroke="#e8b840" stroke-width="2"/>
             <path d="M312 493 H688 M500 437 V549 M365 458 L635 529 M635 458 L365 529" stroke="#8a5f06" stroke-opacity=".48" stroke-width="3"/>
+            <ellipse class="hotspot object-hotspot" cx="500" cy="493" rx="190" ry="62" data-action="zoom-shaft" role="button" tabindex="0" aria-label="Inspect the central drive shaft and its empty sockets"/>
 
             <!-- Small gears scattered -->
             <g opacity="0.5">
@@ -252,6 +253,7 @@
               <linearGradient id="leftWall" x2="0" y2="1"><stop stop-color="#090807"/><stop offset=".7" stop-color="#24170b"/><stop offset="1" stop-color="#100b07"/></linearGradient>
               <radialGradient id="leftLamp"><stop stop-color="#cc7b23" stop-opacity=".36"/><stop offset="1" stop-color="#cc7b23" stop-opacity="0"/></radialGradient>
               <radialGradient id="leftShade"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".72"/></radialGradient>
+              <filter id="paintingBellGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
             </defs>
             <rect width="1000" height="600" fill="url(#leftWall)"/>
             <polygon points="0,0 165,60 165,420 0,520" fill="#0c0907"/>
@@ -276,6 +278,28 @@
             </g>
             <path d="M195 74 H335 V104 H480 M725 83 H800 V387" fill="none" stroke="#614216" stroke-width="12"/>
             <path d="M195 75 H335 V104 H480 M725 83 H800 V387" fill="none" stroke="#c8900a" stroke-opacity=".55" stroke-width="3"/>
+            <!-- A soot-dark painting: three bells catch the light beneath a XII star. -->
+            <g aria-label="An atmospheric painting of a midnight bell tower">
+              <rect x="62" y="92" width="214" height="194" rx="3" fill="#23170c" stroke="#9c6e2a" stroke-width="10"/>
+              <rect x="76" y="106" width="186" height="166" fill="#080b0e" stroke="#4f3518" stroke-width="3"/>
+              <path d="M78 242 L128 192 L164 218 L205 167 L260 231 V270 H78Z" fill="#11191a"/>
+              <circle cx="204" cy="134" r="22" fill="#e4b85b" opacity=".3"/>
+              <text x="204" y="141" text-anchor="middle" fill="#e8c774" font-family="serif" font-size="19">XII</text>
+              <g fill="#d79b34" stroke="#ffe09a" stroke-width="2" filter="url(#paintingBellGlow)">
+                <path d="M112 214 Q121 198 130 214 L136 231 H106Z"/>
+                <path d="M158 198 Q167 181 176 198 L182 215 H152Z"/>
+                <path d="M205 211 Q214 194 223 211 L229 228 H199Z"/>
+              </g>
+            </g>
+            <!-- Separate adjustable mantel clock. -->
+            <g aria-label="A small antique adjustable clock">
+              <path d="M716 404 H827 L840 438 H703Z" fill="#21150a" stroke="#a77932" stroke-width="5"/>
+              <rect x="726" y="292" width="92" height="120" rx="12" fill="#21170e" stroke="#9b7135" stroke-width="6"/>
+              <circle cx="772" cy="342" r="35" fill="#d1b77e" stroke="#6a461c" stroke-width="4"/>
+              <path d="M772 342 V319 M772 342 L750 354" stroke="#2d2116" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="772" cy="342" r="4" fill="#9b6826"/>
+              <path d="M747 402 Q772 376 797 402" fill="none" stroke="#765020" stroke-width="3"/>
+            </g>
             <!-- A modest bench keeps this viewpoint distinct -->
             <path d="M92 431 H318 L347 483 H70Z" fill="#482a13" stroke="#8a5f27" stroke-width="5"/>
             <path d="M112 482 V565 M306 482 V565" stroke="#3b2512" stroke-width="19"/>
@@ -283,7 +307,114 @@
             <path d="M169 380 H257 M169 410 H257" stroke="#ad7b35" stroke-opacity=".5" stroke-width="2"/>
             <circle cx="220" cy="400" r="8" fill="#ad7b35"/>
             <circle cx="500" cy="300" r="500" fill="url(#leftShade)"/>
+            <rect class="hotspot object-hotspot" x="55" y="84" width="230" height="212" data-action="zoom-painting" role="button" tabindex="0" aria-label="Inspect the bell tower painting"/>
+            <rect class="hotspot object-hotspot" x="694" y="280" width="154" height="170" data-action="zoom-clock" role="button" tabindex="0" aria-label="Inspect the adjustable antique clock"/>
             <rect class="hotspot" x="145" y="362" width="138" height="82" data-action="zoom-drawer" role="button" tabindex="0" aria-label="Look closely at the workbench drawer"/>
+          </svg>
+        </div>
+
+        <!-- The painting provides a visual relationship, never a written solution. -->
+        <div id="room-painting-detail" class="room" aria-hidden="true">
+          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Close-up of a dark bell tower painting">
+            <defs>
+              <radialGradient id="paintMoon"><stop stop-color="#f5d888" stop-opacity=".65"/><stop offset="1" stop-color="#b47a22" stop-opacity="0"/></radialGradient>
+              <linearGradient id="paintSky" x2="0" y2="1"><stop stop-color="#080b12"/><stop offset="1" stop-color="#20140d"/></linearGradient>
+              <filter id="bellGlow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <rect width="1000" height="600" fill="#090705"/>
+            <rect x="112" y="42" width="776" height="516" fill="#2b1b0b" stroke="#a8792e" stroke-width="18"/>
+            <rect x="139" y="69" width="722" height="462" fill="url(#paintSky)" stroke="#5d401c" stroke-width="5"/>
+            <circle cx="680" cy="166" r="118" fill="url(#paintMoon)"/>
+            <circle cx="680" cy="166" r="70" fill="#dbc480" opacity=".2"/>
+            <text x="680" y="180" text-anchor="middle" fill="#f2df9d" font-family="serif" font-size="45" letter-spacing="5">XII</text>
+            <path d="M140 454 L235 316 L302 372 L397 238 L478 358 L575 278 L662 389 L752 310 L861 438 V531 H140Z" fill="#11191a" stroke="#2b352f" stroke-width="4"/>
+            <path d="M360 441 V236 H563 V441 M336 236 H587 L548 196 H374Z" fill="#12100d" stroke="#705024" stroke-width="5"/>
+            <g fill="#d99c31" stroke="#ffe29a" stroke-width="4" filter="url(#bellGlow)">
+              <path d="M382 302 Q406 261 430 302 L445 343 H367Z"/><circle cx="406" cy="350" r="7"/>
+              <path d="M438 281 Q462 240 486 281 L501 322 H423Z"/><circle cx="462" cy="329" r="7"/>
+              <path d="M494 302 Q518 261 542 302 L557 343 H479Z"/><circle cx="518" cy="350" r="7"/>
+            </g>
+            <path d="M680 235 V267" stroke="#e9ce82" stroke-width="5" stroke-linecap="round" opacity=".75"/>
+            <text x="500" y="497" text-anchor="middle" fill="#9b7541" font-family="serif" font-size="18" font-style="italic" letter-spacing="3">When the third voice wakes, midnight keeps its vigil.</text>
+          </svg>
+        </div>
+
+        <!-- Adjustable clock puzzle: each hand is independently clickable. -->
+        <div id="room-clock-detail" class="room" aria-hidden="true">
+          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Close-up of an adjustable antique clock">
+            <defs>
+              <radialGradient id="clockLight"><stop stop-color="#c8842d" stop-opacity=".3"/><stop offset="1" stop-color="#c8842d" stop-opacity="0"/></radialGradient>
+              <linearGradient id="clockCase" x2="1" y2="1"><stop stop-color="#5b3b18"/><stop offset=".5" stop-color="#1d140d"/><stop offset="1" stop-color="#745025"/></linearGradient>
+            </defs>
+            <rect width="1000" height="600" fill="#090706"/>
+            <circle cx="500" cy="285" r="420" fill="url(#clockLight)"/>
+            <path d="M260 532 H740 L697 458 H303Z" fill="#21150c" stroke="#a87935" stroke-width="9"/>
+            <rect x="318" y="42" width="364" height="438" rx="40" fill="url(#clockCase)" stroke="#b48643" stroke-width="11"/>
+            <path id="clock-compartment" class="clock-compartment puzzle-hidden" d="M367 367 H633 V458 H367Z" fill="#080706" stroke="#d0a457" stroke-width="7"/>
+            <text id="clock-compartment-label" class="puzzle-hidden" x="500" y="395" text-anchor="middle" fill="#a78148" font-family="monospace" font-size="13" letter-spacing="3">A SECRET KEPT IN FOCUS</text>
+            <g id="clock-glasses" class="puzzle-hidden collectable" data-action="take-glasses" role="button" tabindex="0" aria-label="Take the antique glasses">
+              <circle cx="445" cy="426" r="30" fill="#7cb0ad" fill-opacity=".18" stroke="#e1b85d" stroke-width="7"/>
+              <circle cx="555" cy="426" r="30" fill="#7cb0ad" fill-opacity=".18" stroke="#e1b85d" stroke-width="7"/>
+              <path d="M475 422 Q500 405 525 422 M415 418 L380 404 M585 418 L620 404" fill="none" stroke="#e1b85d" stroke-width="7" stroke-linecap="round"/>
+              <rect x="370" y="390" width="260" height="70" fill="transparent"/>
+            </g>
+            <g id="adjustable-clock" class="adjustable-clock">
+              <circle cx="500" cy="220" r="153" fill="#c8b27d" stroke="#3b2817" stroke-width="13"/>
+              <circle cx="500" cy="220" r="137" fill="#bca875" stroke="#a17637" stroke-width="4"/>
+              <g fill="#332419" font-family="serif" font-size="23" text-anchor="middle">
+                <text x="500" y="105">XII</text><text x="608" y="228">III</text><text x="500" y="347">VI</text><text x="389" y="228">IX</text>
+              </g>
+              <g stroke="#4d3822" stroke-width="4"><path d="M500 88 V105 M632 220 H615 M500 352 V335 M368 220 H385"/></g>
+              <path id="clock-hour-hand" class="clock-hand hour-hand" d="M500 220 V145" stroke="#2b2119" stroke-width="13" stroke-linecap="round"/>
+              <path id="clock-minute-hand" class="clock-hand minute-hand" d="M500 220 V107" stroke="#6a421b" stroke-width="8" stroke-linecap="round"/>
+              <path id="clock-hour-hitarea" class="hand-hitarea" d="M500 220 V140" data-action="turn-hour" role="button" tabindex="0" aria-label="Move the hour hand forward one hour"/>
+              <path id="clock-minute-hitarea" class="hand-hitarea" d="M500 220 V100" data-action="turn-minute" role="button" tabindex="0" aria-label="Move the minute hand forward fifteen minutes"/>
+              <circle cx="500" cy="220" r="12" fill="#c58d33" stroke="#3b2817" stroke-width="5" pointer-events="none"/>
+            </g>
+            <g class="clock-control" data-action="turn-hour" role="button" tabindex="0" aria-label="Move the hour hand forward one hour">
+              <rect x="335" y="476" width="128" height="40" rx="4" fill="#171008" stroke="#9f7537" stroke-width="3"/>
+              <text x="399" y="502" text-anchor="middle" fill="#d4a84e" font-family="monospace" font-size="12" letter-spacing="2">HOUR ↻</text>
+            </g>
+            <g class="clock-control" data-action="turn-minute" role="button" tabindex="0" aria-label="Move the minute hand forward fifteen minutes">
+              <rect x="537" y="476" width="128" height="40" rx="4" fill="#171008" stroke="#9f7537" stroke-width="3"/>
+              <text x="601" y="502" text-anchor="middle" fill="#d4a84e" font-family="monospace" font-size="12" letter-spacing="2">MINUTE ↻</text>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Three-part repair objective. Only the sight component is obtainable now. -->
+        <div id="room-shaft-detail" class="room" aria-hidden="true">
+          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Close-up of the central drive shaft with three component sockets">
+            <defs>
+              <radialGradient id="shaftGlow"><stop stop-color="#bd7a25" stop-opacity=".32"/><stop offset="1" stop-color="#bd7a25" stop-opacity="0"/></radialGradient>
+            </defs>
+            <rect width="1000" height="600" fill="#080604"/>
+            <circle cx="500" cy="295" r="410" fill="url(#shaftGlow)"/>
+            <circle cx="500" cy="292" r="244" fill="#16130f" stroke="#9b6b29" stroke-width="14" stroke-dasharray="22 9"/>
+            <circle cx="500" cy="292" r="199" fill="#090a09" stroke="#554124" stroke-width="7"/>
+            <circle id="shaft-core" cx="500" cy="292" r="61" fill="#19140d" stroke="#8d652d" stroke-width="9"/>
+            <path d="M500 231 V353 M439 292 H561 M457 249 L543 335 M543 249 L457 335" stroke="#6e4b1d" stroke-width="8" opacity=".55"/>
+            <g id="socket-sight" class="component-socket" data-action="insert-component" data-component="glasses" role="button" tabindex="0" aria-label="Sight socket, empty">
+              <circle cx="341" cy="246" r="61" fill="#0c0b09" stroke="#9d743a" stroke-width="7"/>
+              <path d="M306 242 Q322 221 338 242 Q354 221 370 242 M307 244 Q322 270 337 244 M339 244 Q354 270 369 244" fill="none" stroke="#c99a50" stroke-width="5"/>
+              <text x="341" y="326" text-anchor="middle" fill="#8d6a39" font-family="serif" font-size="15" letter-spacing="4">SIGHT</text>
+              <g id="socket-glasses-item" class="puzzle-hidden" pointer-events="none">
+                <circle cx="322" cy="246" r="17" fill="#7caeaa" fill-opacity=".23" stroke="#f0c76e" stroke-width="5"/>
+                <circle cx="360" cy="246" r="17" fill="#7caeaa" fill-opacity=".23" stroke="#f0c76e" stroke-width="5"/>
+                <path d="M339 243 H343 M305 240 L291 232 M377 240 L391 232" stroke="#f0c76e" stroke-width="5" stroke-linecap="round"/>
+              </g>
+            </g>
+            <g id="socket-sound" class="component-socket" data-action="insert-component" data-component="musicBox" role="button" tabindex="0" aria-label="Sound socket, empty">
+              <circle cx="659" cy="246" r="61" fill="#0c0b09" stroke="#695435" stroke-width="7"/>
+              <path d="M640 261 V222 L676 212 V253 M640 261 Q625 257 625 270 Q640 278 640 261 M676 253 Q661 249 661 262 Q676 270 676 253" fill="none" stroke="#8d7045" stroke-width="5"/>
+              <text x="659" y="326" text-anchor="middle" fill="#705b3d" font-family="serif" font-size="15" letter-spacing="4">SOUND</text>
+            </g>
+            <g id="socket-touch" class="component-socket" data-action="insert-component" data-component="windingKey" role="button" tabindex="0" aria-label="Touch socket, empty">
+              <circle cx="500" cy="437" r="61" fill="#0c0b09" stroke="#695435" stroke-width="7"/>
+              <path d="M475 450 V412 Q475 399 487 399 V435 M487 425 V394 Q487 381 499 381 V433 M499 420 V397 Q499 385 511 385 V435 M511 421 Q535 421 535 445 Q535 468 506 473 Q478 472 469 452Z" fill="none" stroke="#8d7045" stroke-width="5" stroke-linejoin="round"/>
+              <text x="500" y="520" text-anchor="middle" fill="#705b3d" font-family="serif" font-size="15" letter-spacing="4">TOUCH</text>
+            </g>
+            <text id="shaft-status" x="500" y="75" text-anchor="middle" fill="#b28a50" font-family="monospace" font-size="14" letter-spacing="3">THREE ABSENCES HOLD THE MECHANISM STILL</text>
           </svg>
         </div>
 
@@ -427,9 +558,11 @@
               <path d="M355 600 L470 456 H530 L645 600Z" fill="#1e120a" stroke="#6d421d" stroke-width="5" opacity=".7"/>
               <path d="M794 54 L943 4 V600 H794Z" fill="url(#detailIron)" stroke="#86622c" stroke-width="9"/>
             </g>
-            <circle id="door-lock-hotspot" class="hotspot" cx="666" cy="456" r="55" data-action="unlock-door" role="button" tabindex="0" aria-label="Use a selected item on the door lock"/>
+            <circle id="door-lock-hotspot" class="hotspot object-hotspot" cx="666" cy="456" r="55" data-action="unlock-door" role="button" tabindex="0" aria-label="Try the final iron door"/>
           </svg>
         </div>
+
+        <p id="game-message" class="game-message" role="status" aria-live="polite"></p>
 
         <nav class="view-nav" aria-label="Room views">
           <button id="turn-left" class="view-nav-button" type="button" aria-label="Turn to the left view" onclick="turnView(-1)">←</button>
@@ -450,7 +583,13 @@
             <path d="M24 19 H51 V25 H43 V31 H36 V25 H24" fill="currentColor"/>
           </svg>
         </button>
-        <span class="inventory-slot"></span>
+        <button id="inventory-glasses" class="inventory-slot" type="button" aria-label="Antique glasses" aria-pressed="false" disabled>
+          <svg id="inventory-glasses-icon" class="puzzle-hidden" viewBox="0 0 64 38" aria-hidden="true">
+            <circle cx="18" cy="20" r="11" fill="#70a5a2" fill-opacity=".22" stroke="currentColor" stroke-width="4"/>
+            <circle cx="46" cy="20" r="11" fill="#70a5a2" fill-opacity=".22" stroke="currentColor" stroke-width="4"/>
+            <path d="M29 18 Q32 15 35 18 M7 17 L2 13 M57 17 L62 13" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </button>
         <span class="inventory-slot"></span>
         <span class="inventory-slot"></span>
         <span class="inventory-slot"></span>
@@ -460,6 +599,6 @@
 
   </div><!-- /#game-screen -->
 
-  <script src="game.js?v=15"></script>
+  <script src="game.js?v=16"></script>
 </body>
 </html>

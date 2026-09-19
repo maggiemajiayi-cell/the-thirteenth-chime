@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Thirteenth Chime — Room Escape</title>
   <meta name="description" content="Explore a Victorian clockwork workshop through fixed first-person views. Click to inspect and find a way out." />
-  <link rel="stylesheet" href="style.css?v=16" />
+  <link rel="stylesheet" href="style.css?v=26" />
 </head>
 <body>
 
@@ -37,7 +37,6 @@
 
     <!-- Floating tick marks -->
     <div class="ticks">
-      <span class="tick" style="left:8%;top:22%;animation-delay:0s">XII</span>
       <span class="tick" style="left:88%;top:18%;animation-delay:0.8s">III</span>
       <span class="tick" style="left:5%;top:72%;animation-delay:1.6s">IX</span>
       <span class="tick" style="left:85%;top:75%;animation-delay:0.4s">VI</span>
@@ -127,17 +126,44 @@
           <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
             <defs>
               <radialGradient id="centerGlow" cx="50%" cy="55%" r="50%">
-                <stop offset="0%"   stop-color="#3a2808" stop-opacity="0.6"/>
+                <stop offset="0%"   stop-color="#d6922d" stop-opacity="0.16"/>
                 <stop offset="100%" stop-color="#000"    stop-opacity="0"/>
               </radialGradient>
+              <linearGradient id="pendulumRodBrass" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#3b2408"/>
+                <stop offset=".2" stop-color="#9b681d"/>
+                <stop offset=".48" stop-color="#f1c65e"/>
+                <stop offset=".7" stop-color="#a66e1c"/>
+                <stop offset="1" stop-color="#392206"/>
+              </linearGradient>
+              <radialGradient id="pendulumBobBrass" cx="34%" cy="25%" r="78%">
+                <stop offset="0" stop-color="#f3cf75"/>
+                <stop offset=".22" stop-color="#c58b2f"/>
+                <stop offset=".58" stop-color="#805116"/>
+                <stop offset=".84" stop-color="#4a2c09"/>
+                <stop offset="1" stop-color="#241606"/>
+              </radialGradient>
+              <radialGradient id="pendulumAura">
+                <stop offset="0" stop-color="#e2a43b" stop-opacity=".28"/>
+                <stop offset=".58" stop-color="#a76518" stop-opacity=".1"/>
+                <stop offset="1" stop-color="#a76518" stop-opacity="0"/>
+              </radialGradient>
+              <pattern id="brushedBrass" patternUnits="userSpaceOnUse" width="11" height="11">
+                <path d="M0 2 H11 M0 7 H11" stroke="#ffe39a" stroke-opacity=".15" stroke-width="1"/>
+                <path d="M0 5 H7 M4 10 H11" stroke="#2e1905" stroke-opacity=".24" stroke-width="1"/>
+              </pattern>
+              <filter id="pendulumRelief" x="-35%" y="-20%" width="170%" height="150%">
+                <feDropShadow dx="0" dy="9" stdDeviation="9" flood-color="#000" flood-opacity=".9"/>
+                <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#e4aa3e" flood-opacity=".55"/>
+              </filter>
               <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
                 <stop offset="45%" stop-color="transparent"/>
                 <stop offset="100%" stop-color="#000" stop-opacity="0.75"/>
               </radialGradient>
               <linearGradient id="wallGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%"   stop-color="#0c0908"/>
-                <stop offset="50%"  stop-color="#141008"/>
-                <stop offset="100%" stop-color="#0a0804"/>
+                <stop offset="0%"   stop-color="#020303"/>
+                <stop offset="55%"  stop-color="#070706"/>
+                <stop offset="100%" stop-color="#0b0906"/>
               </linearGradient>
               <pattern id="brickPat" patternUnits="userSpaceOnUse" width="100" height="40">
                 <rect width="100" height="40" fill="none"/>
@@ -152,37 +178,100 @@
 
             <!-- Background wall -->
             <rect width="1000" height="600" fill="url(#wallGrad)"/>
-            <rect width="1000" height="420" fill="url(#brickPat)" opacity="0.55"/>
+            <rect width="1000" height="420" fill="url(#brickPat)" opacity="0.12"/>
+            <!-- Straight gold linework frames the room like a graphic stage. -->
+            <g fill="none" stroke="#d0aa58" stroke-linecap="round">
+              <path d="M126 0 V418 M139 0 V418" stroke-width="5" opacity=".78"/>
+              <path d="M244 0 V418 M754 0 V418 M865 0 V418" stroke-width="3" opacity=".45"/>
+              <path d="M58 75 H113 M887 75 H944 M56 344 H112 M889 344 H946" stroke-width="5" opacity=".72"/>
+              <path d="M154 74 H235 M765 74 H846 M154 344 H246 M752 344 H846" stroke-width="2" opacity=".3"/>
+            </g>
+            <g fill="#ead38e" opacity=".72">
+              <circle cx="208" cy="164" r="3"/><circle cx="801" cy="219" r="2.5"/><circle cx="105" cy="286" r="2"/>
+              <circle cx="901" cy="294" r="3"/><circle cx="277" cy="65" r="2"/><circle cx="710" cy="111" r="2"/>
+            </g>
 
-            <!-- Floor -->
-            <rect x="0" y="430" width="1000" height="170" fill="#0d0b06"/>
-            <line x1="0" y1="430" x2="1000" y2="430" stroke="#2a1e08" stroke-width="2"/>
-            <!-- Floor planks -->
-            <line x1="0" y1="470" x2="1000" y2="470" stroke="#0a0804" stroke-width="1" opacity="0.5"/>
-            <line x1="0" y1="510" x2="1000" y2="510" stroke="#0a0804" stroke-width="1" opacity="0.5"/>
-            <line x1="0" y1="550" x2="1000" y2="550" stroke="#0a0804" stroke-width="1" opacity="0.5"/>
-            <line x1="200" y1="430" x2="200" y2="600" stroke="#0a0804" stroke-width="1" opacity="0.3"/>
-            <line x1="450" y1="430" x2="450" y2="600" stroke="#0a0804" stroke-width="1" opacity="0.3"/>
-            <line x1="700" y1="430" x2="700" y2="600" stroke="#0a0804" stroke-width="1" opacity="0.3"/>
-            <line x1="900" y1="430" x2="900" y2="600" stroke="#0a0804" stroke-width="1" opacity="0.3"/>
+            <!-- Floor is grouped so the heavy pendulum can transmit a brief tremor. -->
+            <g id="workshop-floor">
+              <rect x="0" y="430" width="1000" height="170" fill="#0d0b06"/>
+              <line x1="0" y1="430" x2="1000" y2="430" stroke="#2a1e08" stroke-width="2"/>
+              <line x1="0" y1="470" x2="1000" y2="470" stroke="#0a0804" stroke-width="1" opacity="0.5"/>
+              <line x1="0" y1="510" x2="1000" y2="510" stroke="#0a0804" stroke-width="1" opacity="0.5"/>
+              <line x1="0" y1="550" x2="1000" y2="550" stroke="#0a0804" stroke-width="1" opacity="0.5"/>
+              <line x1="200" y1="430" x2="200" y2="600" stroke="#0a0804" stroke-width="1" opacity="0.3"/>
+              <line x1="450" y1="430" x2="450" y2="600" stroke="#0a0804" stroke-width="1" opacity="0.3"/>
+              <line x1="700" y1="430" x2="700" y2="600" stroke="#0a0804" stroke-width="1" opacity="0.3"/>
+              <line x1="900" y1="430" x2="900" y2="600" stroke="#0a0804" stroke-width="1" opacity="0.3"/>
+            </g>
+            <g id="floor-dust" aria-hidden="true">
+              <path d="M280 453 Q326 425 370 451 M630 451 Q677 425 724 454" fill="none" stroke="#b98741" stroke-width="5" stroke-linecap="round"/>
+              <path d="M321 470 Q355 445 390 466 M610 466 Q648 443 681 470" fill="none" stroke="#7e5a31" stroke-width="3" stroke-linecap="round"/>
+            </g>
+
+            <!-- A loose clue rests on the floor until collected. -->
+            <g id="floor-note" class="floor-note" data-action="take-note" role="button" tabindex="0" aria-label="Pick up the folded paper lying on the workshop floor">
+              <g transform="rotate(-8 112 525)">
+                <path d="M72 486 L154 480 L164 557 L80 566Z" fill="#d8cfb5" stroke="#17130c" stroke-width="8" stroke-linejoin="round"/>
+                <path d="M72 486 L154 480 L139 501 L88 507Z" fill="#f0ead8" stroke="#9f7e3d" stroke-width="3"/>
+                <path d="M88 521 L146 516 M91 536 L143 531 M94 551 L128 548" stroke="#6f5b39" stroke-width="3" opacity=".72"/>
+                <path d="M82 565 L101 544 L128 560" fill="#b7a984" opacity=".65"/>
+              </g>
+              <rect class="note-hitarea" x="55" y="462" width="125" height="120" fill="transparent"/>
+            </g>
 
             <!-- Ceiling -->
             <rect x="0" y="0" width="1000" height="55" fill="#070504" opacity="0.95"/>
             <rect x="0" y="53" width="1000" height="3" fill="#2a1e08" opacity="0.5"/>
 
-            <!-- Hanging pendulum (massive) -->
-            <line x1="500" y1="0" x2="500" y2="55" stroke="#4a3010" stroke-width="5"/>
-            <!-- Pendulum rod -->
-            <line x1="500" y1="55" x2="500" y2="320" stroke="#6a4a18" stroke-width="3"/>
-            <!-- Bob -->
-            <ellipse cx="500" cy="335" rx="38" ry="42" fill="#4a3810" stroke="#c8900a" stroke-width="2.5"/>
-            <ellipse cx="500" cy="335" rx="28" ry="32" fill="#3a2808" opacity="0.5"/>
-            <!-- Engraving on bob -->
-            <text x="500" y="330" text-anchor="middle" font-size="18" fill="#c8900a" font-family="serif" opacity="0.7">⚙</text>
-            <text x="500" y="350" text-anchor="middle" font-size="9" fill="#8a5f06" font-family="monospace" opacity="0.8">XII</text>
+            <!-- The final iron door is fixed directly behind the pendulum. -->
+            <g id="workshop-central-door" aria-label="A massive iron door hidden behind the pendulum">
+              <circle cx="500" cy="260" r="238" fill="#c17c25" opacity=".08"/>
+              <path d="M338 456 V214 Q338 62 500 62 Q662 62 662 214 V456Z" fill="#0b0c0c" stroke="#8e662e" stroke-width="13"/>
+              <path d="M359 448 V216 Q359 88 500 88 Q641 88 641 216 V448Z" fill="#242421" stroke="#554937" stroke-width="6"/>
+              <path d="M500 90 V449 M365 291 H635" stroke="#0c0d0d" stroke-width="12"/>
+              <path d="M377 117 Q500 57 623 117" fill="none" stroke="#c1944b" stroke-opacity=".72" stroke-width="4"/>
+              <g fill="#9d7944">
+                <circle cx="380" cy="212" r="6"/><circle cx="380" cy="335" r="6"/><circle cx="380" cy="422" r="6"/>
+                <circle cx="620" cy="212" r="6"/><circle cx="620" cy="335" r="6"/><circle cx="620" cy="422" r="6"/>
+              </g>
+              <g fill="none" stroke="#a97935" stroke-width="5" opacity=".8">
+                <path d="M405 228 L431 186 L457 228 M431 186 V272"/>
+                <path d="M478 187 V271 M478 187 L522 271 M522 187 V271"/>
+                <path d="M546 188 H590 L546 270 H590 M568 188 V270"/>
+              </g>
+              <circle cx="584" cy="365" r="31" fill="#11110f" stroke="#b47f39" stroke-width="6"/>
+              <path d="M572 365 H596 M584 353 V377" stroke="#dfae4e" stroke-width="4"/>
+            </g>
+
+            <!-- Rod and bob are one group, rotating around the immutable (500, 0) pivot. -->
+            <g id="workshop-pendulum" class="workshop-pendulum" aria-label="Massive pendulum, vertical">
+              <ellipse cx="500" cy="334" rx="178" ry="205" fill="url(#pendulumAura)"/>
+              <g filter="url(#pendulumRelief)">
+                <line x1="500" y1="0" x2="500" y2="318" stroke="#140d04" stroke-width="27"/>
+                <line x1="500" y1="0" x2="500" y2="318" stroke="url(#pendulumRodBrass)" stroke-width="19"/>
+                <line x1="494" y1="3" x2="494" y2="316" stroke="#ffe18a" stroke-opacity=".7" stroke-width="3"/>
+                <line x1="507" y1="3" x2="507" y2="316" stroke="#3a2006" stroke-opacity=".72" stroke-width="3"/>
+                <ellipse cx="500" cy="340" rx="120" ry="136" fill="#160e04" stroke="#1c1104" stroke-width="15"/>
+                <ellipse cx="500" cy="340" rx="106" ry="121" fill="url(#pendulumBobBrass)" stroke="#e2ad42" stroke-width="9"/>
+                <ellipse cx="500" cy="340" rx="101" ry="116" fill="url(#brushedBrass)" opacity=".82"/>
+                <path d="M437 269 Q476 223 534 244" fill="none" stroke="#ffe49a" stroke-opacity=".58" stroke-width="7" stroke-linecap="round"/>
+                <path d="M576 388 Q550 435 500 451" fill="none" stroke="#2b1704" stroke-opacity=".65" stroke-width="8" stroke-linecap="round"/>
+                <ellipse cx="500" cy="340" rx="78" ry="92" fill="none" stroke="#f0c45d" stroke-opacity=".64" stroke-width="5"/>
+                <path d="M500 258 V422 M424 340 H576 M447 285 L553 395 M553 285 L447 395" stroke="#e4b34b" stroke-opacity=".6" stroke-width="7"/>
+                <circle cx="500" cy="340" r="31" fill="#2b1b08" stroke="#f0c35a" stroke-width="7"/>
+                <circle cx="500" cy="340" r="12" fill="#d79c31" stroke="#ffe39a" stroke-width="4"/>
+                <circle cx="500" cy="340" r="4" fill="#fff0b2"/>
+                <g fill="#e9b94e" stroke="#5d3609" stroke-width="2">
+                  <circle cx="500" cy="237" r="6"/><circle cx="500" cy="443" r="6"/>
+                  <circle cx="409" cy="340" r="6"/><circle cx="591" cy="340" r="6"/>
+                </g>
+              </g>
+            </g>
+            <circle cx="500" cy="0" r="23" fill="#5f3b0d" stroke="#e0ad42" stroke-width="9" aria-hidden="true"/>
+            <circle cx="500" cy="0" r="8" fill="#f0c65e" aria-hidden="true"/>
 
             <!-- LARGE GEAR WALL LEFT -->
-            <g opacity="0.35">
+            <g id="workshop-gear-left" opacity="0.35">
               <circle cx="80" cy="210" r="120" fill="none" stroke="#8a5f06" stroke-width="4"/>
               <circle cx="80" cy="210" r="100" fill="none" stroke="#8a5f06" stroke-width="2"/>
               <!-- Gear teeth marks -->
@@ -195,7 +284,7 @@
             </g>
 
             <!-- LARGE GEAR WALL RIGHT -->
-            <g opacity="0.30">
+            <g id="workshop-gear-right" opacity="0.30">
               <circle cx="920" cy="240" r="135" fill="none" stroke="#7a4f0a" stroke-width="4"/>
               <circle cx="920" cy="240" r="110" fill="none" stroke="#6a4008" stroke-width="2"/>
               <circle cx="920" cy="240" r="10" fill="#5a3a0e"/>
@@ -205,15 +294,44 @@
               <line x1="1016" y1="144" x2="824" y2="336" stroke="#5a3a0e" stroke-width="2"/>
             </g>
 
-            <!-- Circular gear platform in the foreground -->
-            <path d="M315 493 L315 550 Q500 590 685 550 L685 493Z" fill="#171006" stroke="#5a3a0e" stroke-width="3"/>
-            <ellipse cx="500" cy="493" rx="188" ry="57" fill="#352309" stroke="#c8900a" stroke-width="5"/>
-            <ellipse cx="500" cy="493" rx="166" ry="47" fill="#211807" stroke="#8a5f06" stroke-width="2"/>
-            <ellipse cx="500" cy="493" rx="125" ry="35" fill="none" stroke="#7a5010" stroke-width="2"/>
-            <ellipse cx="500" cy="493" rx="70" ry="20" fill="none" stroke="#c8900a" stroke-opacity=".7" stroke-width="2"/>
-            <ellipse cx="500" cy="493" rx="18" ry="8" fill="#5a3a0e" stroke="#e8b840" stroke-width="2"/>
-            <path d="M312 493 H688 M500 437 V549 M365 458 L635 529 M635 458 L365 529" stroke="#8a5f06" stroke-opacity=".48" stroke-width="3"/>
-            <ellipse class="hotspot object-hotspot" cx="500" cy="493" rx="190" ry="62" data-action="zoom-shaft" role="button" tabindex="0" aria-label="Inspect the central drive shaft and its empty sockets"/>
+            <!-- High-contrast repair desk: ivory worktop, black body and gold inked edges. -->
+            <g id="workshop-platform">
+              <path d="M218 438 H782 L824 506 H176Z" fill="#f1efe7" stroke="#171613" stroke-width="13" stroke-linejoin="round"/>
+              <path d="M218 438 H782 L824 506 H176Z" fill="none" stroke="#d1aa58" stroke-width="5" stroke-linejoin="round"/>
+              <path d="M176 506 H824 V600 H176Z" fill="#030404" stroke="#171613" stroke-width="13"/>
+              <path d="M182 509 H818 V594 H182Z" fill="none" stroke="#c69d4d" stroke-width="5"/>
+              <path d="M207 541 H793 M205 573 H795" stroke="#947335" stroke-width="3" opacity=".8"/>
+              <path d="M500 509 V594" stroke="#6e552a" stroke-width="3" opacity=".7"/>
+              <g id="workshop-drive-core">
+                <circle cx="500" cy="551" r="25" fill="#050606" stroke="#c69d4d" stroke-width="5"/>
+                <path d="M500 532 V570 M481 551 H519 M487 538 L513 564 M513 538 L487 564" stroke="#d7af5c" stroke-width="4"/>
+              </g>
+              <g id="desk-socket-sight" class="desk-mini-slot">
+                <ellipse cx="343" cy="476" rx="58" ry="29" fill="#050606" stroke="#c9a04d" stroke-width="5"/>
+                <path d="M315 475 Q329 458 343 475 Q357 458 371 475 M316 476 Q329 493 342 476 M344 476 Q357 493 370 476" fill="none" stroke="#f0d47f" stroke-width="4"/>
+                <g id="desk-glasses-item" class="puzzle-hidden" pointer-events="none">
+                  <circle cx="329" cy="476" r="13" fill="#b8e1df" fill-opacity=".55" stroke="#fff0ad" stroke-width="4"/>
+                  <circle cx="357" cy="476" r="13" fill="#b8e1df" fill-opacity=".55" stroke="#fff0ad" stroke-width="4"/>
+                  <path d="M342 474 H344" stroke="#fff0ad" stroke-width="4"/>
+                </g>
+              </g>
+              <g id="desk-socket-sound" class="desk-mini-slot">
+                <ellipse cx="500" cy="476" rx="58" ry="29" fill="#050606" stroke="#c9a04d" stroke-width="5"/>
+                <path d="M485 486 V461 L516 454 V479 M485 486 Q474 482 474 492 Q485 497 485 486 M516 479 Q505 475 505 485 Q516 490 516 479" fill="none" stroke="#f0d47f" stroke-width="4"/>
+                <g id="desk-musicbox-item" class="puzzle-hidden" pointer-events="none">
+                  <rect x="478" y="459" width="44" height="31" rx="4" fill="#301a0d" stroke="#ffe18b" stroke-width="4"/>
+                  <path d="M485 466 H515 M488 473 H512 M494 459 V490 M506 459 V490" stroke="#d6a94d" stroke-width="2"/>
+                </g>
+              </g>
+              <g id="desk-socket-touch" class="desk-mini-slot">
+                <ellipse cx="657" cy="476" rx="58" ry="29" fill="#050606" stroke="#c9a04d" stroke-width="5"/>
+                <path d="M644 489 V464 Q644 456 651 456 V477 M651 472 V453 Q651 446 658 446 V477 M658 469 V455 Q658 448 665 448 V479 M665 469 Q680 470 679 483 Q677 495 660 498 Q646 497 640 489Z" fill="none" stroke="#f0d47f" stroke-width="4"/>
+                <g id="desk-windingkey-item" class="puzzle-hidden" pointer-events="none">
+                  <path d="M638 468 Q647 455 656 468 Q665 455 674 468 M641 471 Q647 482 653 471 M659 471 Q665 482 671 471 M656 472 V491 H674 M666 484 V497" fill="none" stroke="#ffe18b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+              </g>
+              <path class="hotspot object-hotspot" d="M218 438 H782 L824 506 H176Z" data-action="zoom-shaft" role="button" tabindex="0" aria-label="Inspect the ivory repair desk and its three sockets"/>
+            </g>
 
             <!-- Small gears scattered -->
             <g opacity="0.5">
@@ -225,23 +343,14 @@
               <circle cx="740" cy="380" r="6"  fill="#4a3008"/>
             </g>
 
-            <!-- Only the lower edge of the oversized wall clock is visible. -->
-            <g aria-label="Stopped clock reads 11:58">
-              <circle cx="820" cy="-120" r="285" fill="#0c0a07" stroke="#9a6a0a" stroke-width="15"/>
-              <circle cx="820" cy="-120" r="257" fill="none" stroke="#5e420e" stroke-width="5"/>
-              <path d="M575 26 L600 20 M663 120 L677 99 M820 158 V134 M977 120 L963 99 M1065 26 L1040 20" fill="none" stroke="#c8900a" stroke-width="6" stroke-linecap="round"/>
-              <rect x="685" y="40" width="270" height="93" rx="7" fill="#211607" stroke="#ab7b2b" stroke-width="5"/>
-              <rect x="695" y="50" width="250" height="73" rx="3" fill="#110e08" stroke="#5e420e" stroke-width="2"/>
-              <circle cx="705" cy="86" r="3" fill="#8a5f06"/>
-              <circle cx="935" cy="86" r="3" fill="#8a5f06"/>
-              <text x="820" y="105" text-anchor="middle" font-size="47" fill="#e8b840" font-family="monospace" letter-spacing="4">11:58</text>
-            </g>
-
             <!-- Ambient center glow -->
-            <rect width="1000" height="600" fill="url(#centerGlow)"/>
+            <rect width="1000" height="600" fill="url(#centerGlow)" pointer-events="none"/>
 
             <!-- Vignette -->
-            <rect width="1000" height="600" fill="url(#vignette)"/>
+            <rect width="1000" height="600" fill="url(#vignette)" pointer-events="none"/>
+
+            <!-- It becomes interactive only when all three repair components are seated. -->
+            <path id="workshop-door-hotspot" class="hotspot object-hotspot puzzle-hidden" d="M338 456 V214 Q338 62 500 62 Q662 62 662 214 V456Z" data-action="zoom-central-door" role="button" tabindex="0" aria-label="Inspect the revealed central iron door"/>
 
           </svg>
         </div>
@@ -250,41 +359,47 @@
         <div id="room-gears" class="room" aria-hidden="true">
           <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Left side of the clockwork workshop">
             <defs>
-              <linearGradient id="leftWall" x2="0" y2="1"><stop stop-color="#090807"/><stop offset=".7" stop-color="#24170b"/><stop offset="1" stop-color="#100b07"/></linearGradient>
-              <radialGradient id="leftLamp"><stop stop-color="#cc7b23" stop-opacity=".36"/><stop offset="1" stop-color="#cc7b23" stop-opacity="0"/></radialGradient>
-              <radialGradient id="leftShade"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".72"/></radialGradient>
+              <linearGradient id="leftWall" x2="0" y2="1"><stop stop-color="#020303"/><stop offset=".7" stop-color="#060605"/><stop offset="1" stop-color="#0a0805"/></linearGradient>
+              <radialGradient id="leftLamp"><stop stop-color="#d9ab55" stop-opacity=".16"/><stop offset="1" stop-color="#d9ab55" stop-opacity="0"/></radialGradient>
+              <radialGradient id="leftShade"><stop offset=".64" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".46"/></radialGradient>
               <filter id="paintingBellGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
             </defs>
             <rect width="1000" height="600" fill="url(#leftWall)"/>
-            <polygon points="0,0 165,60 165,420 0,520" fill="#0c0907"/>
-            <polygon points="1000,0 855,65 855,420 1000,520" fill="#110c07"/>
-            <path d="M0 520 L165 420 H855 L1000 520 V600 H0Z" fill="#120c06" stroke="#523414" stroke-width="3"/>
-            <path d="M165 420 L0 600 M855 420 L1000 600 M305 420 L220 600 M695 420 L780 600" stroke="#513515" stroke-opacity=".38" stroke-width="3"/>
-            <path d="M155 60 H860 M165 420 H855" stroke="#78501a" stroke-opacity=".45" stroke-width="5"/>
+            <polygon points="0,0 165,60 165,420 0,520" fill="#010202" stroke="#c9a252" stroke-opacity=".36" stroke-width="3"/>
+            <polygon points="1000,0 855,65 855,420 1000,520" fill="#010202" stroke="#c9a252" stroke-opacity=".36" stroke-width="3"/>
+            <path d="M0 520 L165 420 H855 L1000 520 V600 H0Z" fill="#050504" stroke="#c69d4d" stroke-width="4"/>
+            <path d="M165 420 L0 600 M855 420 L1000 600 M305 420 L220 600 M695 420 L780 600" stroke="#a17d3b" stroke-opacity=".58" stroke-width="3"/>
+            <path d="M155 60 H860 M165 420 H855" stroke="#d2aa55" stroke-opacity=".72" stroke-width="5"/>
+            <g fill="none" stroke="#d0aa58" stroke-linecap="round">
+              <path d="M118 0 V419 M132 0 V419 M868 0 V419 M882 0 V419" stroke-width="4" opacity=".68"/>
+              <path d="M47 87 H105 M895 87 H953 M47 343 H105 M895 343 H953" stroke-width="5" opacity=".65"/>
+              <path d="M326 0 V420 M674 0 V420" stroke-width="2" opacity=".25"/>
+            </g>
+            <g fill="#ead38e" opacity=".68"><circle cx="205" cy="326" r="3"/><circle cx="808" cy="175" r="2.5"/><circle cx="92" cy="250" r="2"/><circle cx="914" cy="292" r="3"/></g>
             <circle cx="500" cy="260" r="310" fill="url(#leftLamp)"/>
             <!-- Large brass gears, bolted to the wall -->
-            <g fill="none" stroke="#a87926">
-              <circle cx="410" cy="240" r="174" stroke-width="17" stroke-dasharray="21 8"/>
-              <circle cx="410" cy="240" r="151" stroke-width="8"/>
-              <circle cx="410" cy="240" r="62" stroke-width="10"/>
-              <path d="M410 89 V391 M259 240 H561 M303 133 L517 347 M517 133 L303 347" stroke-width="11"/>
-              <circle cx="410" cy="240" r="25" fill="#3f2a0d" stroke-width="5"/>
+            <g fill="none" stroke="#d2aa55">
+              <circle cx="410" cy="240" r="174" stroke-width="12" stroke-dasharray="21 8"/>
+              <circle cx="410" cy="240" r="151" stroke-width="6"/>
+              <circle cx="410" cy="240" r="62" stroke-width="7"/>
+              <path d="M410 89 V391 M259 240 H561 M303 133 L517 347 M517 133 L303 347" stroke-width="8"/>
+              <circle cx="410" cy="240" r="25" fill="#050606" stroke-width="5"/>
             </g>
-            <g fill="none" stroke="#745019" stroke-opacity=".8">
-              <circle cx="698" cy="300" r="108" stroke-width="13" stroke-dasharray="16 7"/>
+            <g fill="none" stroke="#b38d45" stroke-opacity=".88">
+              <circle cx="698" cy="300" r="108" stroke-width="10" stroke-dasharray="16 7"/>
               <circle cx="698" cy="300" r="85" stroke-width="5"/>
-              <path d="M698 216 V384 M614 300 H782 M638 240 L758 360 M758 240 L638 360" stroke-width="8"/>
-              <circle cx="698" cy="300" r="14" fill="#33230e" stroke-width="4"/>
+              <path d="M698 216 V384 M614 300 H782 M638 240 L758 360 M758 240 L638 360" stroke-width="6"/>
+              <circle cx="698" cy="300" r="14" fill="#050606" stroke-width="4"/>
             </g>
-            <path d="M195 74 H335 V104 H480 M725 83 H800 V387" fill="none" stroke="#614216" stroke-width="12"/>
-            <path d="M195 75 H335 V104 H480 M725 83 H800 V387" fill="none" stroke="#c8900a" stroke-opacity=".55" stroke-width="3"/>
-            <!-- A soot-dark painting: three bells catch the light beneath a XII star. -->
+            <path d="M195 74 H335 V104 H480 M725 83 H800 V387" fill="none" stroke="#11110f" stroke-width="12"/>
+            <path d="M195 75 H335 V104 H480 M725 83 H800 V387" fill="none" stroke="#d2aa55" stroke-opacity=".78" stroke-width="3"/>
+            <!-- A soot-dark painting: three bells catch the light beneath a high star. -->
             <g aria-label="An atmospheric painting of a midnight bell tower">
-              <rect x="62" y="92" width="214" height="194" rx="3" fill="#23170c" stroke="#9c6e2a" stroke-width="10"/>
-              <rect x="76" y="106" width="186" height="166" fill="#080b0e" stroke="#4f3518" stroke-width="3"/>
+              <rect x="62" y="92" width="214" height="194" rx="3" fill="#030404" stroke="#d2aa55" stroke-width="10"/>
+              <rect x="76" y="106" width="186" height="166" fill="#080b0e" stroke="#f0d183" stroke-width="3"/>
               <path d="M78 242 L128 192 L164 218 L205 167 L260 231 V270 H78Z" fill="#11191a"/>
               <circle cx="204" cy="134" r="22" fill="#e4b85b" opacity=".3"/>
-              <text x="204" y="141" text-anchor="middle" fill="#e8c774" font-family="serif" font-size="19">XII</text>
+              <path d="M204 120 L211 134 L204 148 L197 134Z" fill="#e8c774" opacity=".85"/>
               <g fill="#d79b34" stroke="#ffe09a" stroke-width="2" filter="url(#paintingBellGlow)">
                 <path d="M112 214 Q121 198 130 214 L136 231 H106Z"/>
                 <path d="M158 198 Q167 181 176 198 L182 215 H152Z"/>
@@ -293,19 +408,20 @@
             </g>
             <!-- Separate adjustable mantel clock. -->
             <g aria-label="A small antique adjustable clock">
-              <path d="M716 404 H827 L840 438 H703Z" fill="#21150a" stroke="#a77932" stroke-width="5"/>
-              <rect x="726" y="292" width="92" height="120" rx="12" fill="#21170e" stroke="#9b7135" stroke-width="6"/>
-              <circle cx="772" cy="342" r="35" fill="#d1b77e" stroke="#6a461c" stroke-width="4"/>
+              <path d="M716 404 H827 L840 438 H703Z" fill="#f1efe7" stroke="#d2aa55" stroke-width="5"/>
+              <rect x="726" y="292" width="92" height="120" rx="12" fill="#030404" stroke="#d2aa55" stroke-width="6"/>
+              <circle cx="772" cy="342" r="35" fill="#f1efe7" stroke="#d2aa55" stroke-width="4"/>
               <path d="M772 342 V319 M772 342 L750 354" stroke="#2d2116" stroke-width="4" stroke-linecap="round"/>
               <circle cx="772" cy="342" r="4" fill="#9b6826"/>
               <path d="M747 402 Q772 376 797 402" fill="none" stroke="#765020" stroke-width="3"/>
             </g>
             <!-- A modest bench keeps this viewpoint distinct -->
-            <path d="M92 431 H318 L347 483 H70Z" fill="#482a13" stroke="#8a5f27" stroke-width="5"/>
-            <path d="M112 482 V565 M306 482 V565" stroke="#3b2512" stroke-width="19"/>
-            <rect x="158" y="366" width="110" height="68" rx="7" fill="#201611" stroke="#8a6232" stroke-width="4"/>
-            <path d="M169 380 H257 M169 410 H257" stroke="#ad7b35" stroke-opacity=".5" stroke-width="2"/>
-            <circle cx="220" cy="400" r="8" fill="#ad7b35"/>
+            <path d="M92 431 H318 L347 483 H70Z" fill="#f1efe7" stroke="#d2aa55" stroke-width="6"/>
+            <path d="M112 482 V565 M306 482 V565" stroke="#050606" stroke-width="22"/>
+            <path d="M112 482 V565 M306 482 V565" stroke="#c99f4c" stroke-width="4"/>
+            <rect x="158" y="366" width="110" height="68" rx="7" fill="#030404" stroke="#d2aa55" stroke-width="5"/>
+            <path d="M169 380 H257 M169 410 H257" stroke="#d9b363" stroke-opacity=".75" stroke-width="2"/>
+            <circle cx="220" cy="400" r="8" fill="#ead38e"/>
             <circle cx="500" cy="300" r="500" fill="url(#leftShade)"/>
             <rect class="hotspot object-hotspot" x="55" y="84" width="230" height="212" data-action="zoom-painting" role="button" tabindex="0" aria-label="Inspect the bell tower painting"/>
             <rect class="hotspot object-hotspot" x="694" y="280" width="154" height="170" data-action="zoom-clock" role="button" tabindex="0" aria-label="Inspect the adjustable antique clock"/>
@@ -326,7 +442,7 @@
             <rect x="139" y="69" width="722" height="462" fill="url(#paintSky)" stroke="#5d401c" stroke-width="5"/>
             <circle cx="680" cy="166" r="118" fill="url(#paintMoon)"/>
             <circle cx="680" cy="166" r="70" fill="#dbc480" opacity=".2"/>
-            <text x="680" y="180" text-anchor="middle" fill="#f2df9d" font-family="serif" font-size="45" letter-spacing="5">XII</text>
+            <path d="M680 126 L692 151 L680 176 L668 151Z" fill="#f2df9d" opacity=".8"/>
             <path d="M140 454 L235 316 L302 372 L397 238 L478 358 L575 278 L662 389 L752 310 L861 438 V531 H140Z" fill="#11191a" stroke="#2b352f" stroke-width="4"/>
             <path d="M360 441 V236 H563 V441 M336 236 H587 L548 196 H374Z" fill="#12100d" stroke="#705024" stroke-width="5"/>
             <g fill="#d99c31" stroke="#ffe29a" stroke-width="4" filter="url(#bellGlow)">
@@ -335,7 +451,6 @@
               <path d="M494 302 Q518 261 542 302 L557 343 H479Z"/><circle cx="518" cy="350" r="7"/>
             </g>
             <path d="M680 235 V267" stroke="#e9ce82" stroke-width="5" stroke-linecap="round" opacity=".75"/>
-            <text x="500" y="497" text-anchor="middle" fill="#9b7541" font-family="serif" font-size="18" font-style="italic" letter-spacing="3">When the third voice wakes, midnight keeps its vigil.</text>
           </svg>
         </div>
 
@@ -362,8 +477,9 @@
               <circle cx="500" cy="220" r="153" fill="#c8b27d" stroke="#3b2817" stroke-width="13"/>
               <circle cx="500" cy="220" r="137" fill="#bca875" stroke="#a17637" stroke-width="4"/>
               <g fill="#332419" font-family="serif" font-size="23" text-anchor="middle">
-                <text x="500" y="105">XII</text><text x="608" y="228">III</text><text x="500" y="347">VI</text><text x="389" y="228">IX</text>
+                <text x="608" y="228">III</text><text x="500" y="347">VI</text><text x="389" y="228">IX</text>
               </g>
+              <path d="M500 89 L508 103 L500 117 L492 103Z" fill="#332419"/>
               <g stroke="#4d3822" stroke-width="4"><path d="M500 88 V105 M632 220 H615 M500 352 V335 M368 220 H385"/></g>
               <path id="clock-hour-hand" class="clock-hand hour-hand" d="M500 220 V145" stroke="#2b2119" stroke-width="13" stroke-linecap="round"/>
               <path id="clock-minute-hand" class="clock-hand minute-hand" d="M500 220 V107" stroke="#6a421b" stroke-width="8" stroke-linecap="round"/>
@@ -382,39 +498,64 @@
           </svg>
         </div>
 
-        <!-- Three-part repair objective. Only the sight component is obtainable now. -->
+        <!-- Three-part repair desk. Only the left sight component is obtainable now. -->
         <div id="room-shaft-detail" class="room" aria-hidden="true">
-          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Close-up of the central drive shaft with three component sockets">
+          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Close-up of the ivory repair desk with three component sockets">
             <defs>
-              <radialGradient id="shaftGlow"><stop stop-color="#bd7a25" stop-opacity=".32"/><stop offset="1" stop-color="#bd7a25" stop-opacity="0"/></radialGradient>
+              <linearGradient id="ivoryDesk" x2="0" y2="1"><stop stop-color="#fffefa"/><stop offset=".72" stop-color="#ece8dc"/><stop offset="1" stop-color="#d8d1c1"/></linearGradient>
+              <filter id="deskInk" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#000" flood-opacity=".9"/></filter>
             </defs>
-            <rect width="1000" height="600" fill="#080604"/>
-            <circle cx="500" cy="295" r="410" fill="url(#shaftGlow)"/>
-            <circle cx="500" cy="292" r="244" fill="#16130f" stroke="#9b6b29" stroke-width="14" stroke-dasharray="22 9"/>
-            <circle cx="500" cy="292" r="199" fill="#090a09" stroke="#554124" stroke-width="7"/>
-            <circle id="shaft-core" cx="500" cy="292" r="61" fill="#19140d" stroke="#8d652d" stroke-width="9"/>
-            <path d="M500 231 V353 M439 292 H561 M457 249 L543 335 M543 249 L457 335" stroke="#6e4b1d" stroke-width="8" opacity=".55"/>
-            <g id="socket-sight" class="component-socket" data-action="insert-component" data-component="glasses" role="button" tabindex="0" aria-label="Sight socket, empty">
-              <circle cx="341" cy="246" r="61" fill="#0c0b09" stroke="#9d743a" stroke-width="7"/>
-              <path d="M306 242 Q322 221 338 242 Q354 221 370 242 M307 244 Q322 270 337 244 M339 244 Q354 270 369 244" fill="none" stroke="#c99a50" stroke-width="5"/>
-              <text x="341" y="326" text-anchor="middle" fill="#8d6a39" font-family="serif" font-size="15" letter-spacing="4">SIGHT</text>
+            <rect width="1000" height="600" fill="#020303"/>
+            <g fill="none" stroke="#caa354" stroke-linecap="round">
+              <path d="M102 0 V600 M116 0 Q108 177 119 313 T112 600 M884 0 V600 M898 0 Q890 154 901 309 T893 600" stroke-width="5" opacity=".72"/>
+              <path d="M170 66 H830 M170 91 H830" stroke-width="3" opacity=".38"/>
+              <path d="M40 128 H91 M909 128 H960 M42 472 H91 M909 472 H958" stroke-width="5" opacity=".68"/>
+            </g>
+            <g fill="#f2daa0" opacity=".7"><circle cx="168" cy="145" r="3"/><circle cx="842" cy="215" r="2.5"/><circle cx="224" cy="91" r="2"/><circle cx="767" cy="440" r="3"/></g>
+            <text id="shaft-status" x="500" y="73" text-anchor="middle" fill="#d2ae61" font-family="monospace" font-size="14" letter-spacing="3">0 OF 3 COMPONENTS SEATED</text>
+
+            <g filter="url(#deskInk)">
+              <path d="M116 159 H884 L938 410 H62Z" fill="url(#ivoryDesk)" stroke="#11110f" stroke-width="17" stroke-linejoin="round"/>
+              <path d="M116 159 H884 L938 410 H62Z" fill="none" stroke="#d0a957" stroke-width="6" stroke-linejoin="round"/>
+              <path d="M62 410 H938 V600 H62Z" fill="#030404" stroke="#11110f" stroke-width="17"/>
+              <path d="M70 416 H930 V590 H70Z" fill="none" stroke="#c69d4d" stroke-width="6"/>
+              <path d="M93 466 H907 M91 537 H909 M500 416 V590" stroke="#85662f" stroke-width="4" opacity=".72"/>
+              <circle id="shaft-core" cx="500" cy="508" r="37" fill="#060706" stroke="#caa052" stroke-width="7"/>
+              <path d="M500 480 V536 M472 508 H528 M480 488 L520 528 M520 488 L480 528" stroke="#dbb45d" stroke-width="5" opacity=".8"/>
+            </g>
+
+            <g id="socket-sight" class="component-socket desk-component-socket" data-action="insert-component" data-component="glasses" role="button" tabindex="0" aria-label="Sight socket, empty">
+              <circle cx="275" cy="290" r="78" fill="#040505" stroke="#cda657" stroke-width="8"/>
+              <circle cx="275" cy="290" r="63" fill="none" stroke="#6f572c" stroke-width="3" stroke-dasharray="7 8"/>
+              <path d="M232 287 Q251 263 270 287 Q289 263 308 287 M233 290 Q251 318 269 290 M271 290 Q289 318 307 290" fill="none" stroke="#f0d47f" stroke-width="7"/>
+              <text x="275" y="388" text-anchor="middle" fill="#352b1d" font-family="serif" font-size="16" font-weight="600" letter-spacing="5">SIGHT</text>
               <g id="socket-glasses-item" class="puzzle-hidden" pointer-events="none">
-                <circle cx="322" cy="246" r="17" fill="#7caeaa" fill-opacity=".23" stroke="#f0c76e" stroke-width="5"/>
-                <circle cx="360" cy="246" r="17" fill="#7caeaa" fill-opacity=".23" stroke="#f0c76e" stroke-width="5"/>
-                <path d="M339 243 H343 M305 240 L291 232 M377 240 L391 232" stroke="#f0c76e" stroke-width="5" stroke-linecap="round"/>
+                <circle cx="253" cy="290" r="23" fill="#b8e1df" fill-opacity=".55" stroke="#fff0ad" stroke-width="7"/>
+                <circle cx="297" cy="290" r="23" fill="#b8e1df" fill-opacity=".55" stroke="#fff0ad" stroke-width="7"/>
+                <path d="M275 287 H278 M230 281 L216 272 M320 281 L334 272" stroke="#fff0ad" stroke-width="6" stroke-linecap="round"/>
               </g>
             </g>
-            <g id="socket-sound" class="component-socket" data-action="insert-component" data-component="musicBox" role="button" tabindex="0" aria-label="Sound socket, empty">
-              <circle cx="659" cy="246" r="61" fill="#0c0b09" stroke="#695435" stroke-width="7"/>
-              <path d="M640 261 V222 L676 212 V253 M640 261 Q625 257 625 270 Q640 278 640 261 M676 253 Q661 249 661 262 Q676 270 676 253" fill="none" stroke="#8d7045" stroke-width="5"/>
-              <text x="659" y="326" text-anchor="middle" fill="#705b3d" font-family="serif" font-size="15" letter-spacing="4">SOUND</text>
+            <g id="socket-sound" class="component-socket desk-component-socket" data-action="insert-component" data-component="musicBox" role="button" tabindex="0" aria-label="Sound socket, empty">
+              <circle cx="500" cy="290" r="78" fill="#040505" stroke="#cda657" stroke-width="8"/>
+              <circle cx="500" cy="290" r="63" fill="none" stroke="#6f572c" stroke-width="3" stroke-dasharray="7 8"/>
+              <path d="M479 310 V265 L521 254 V300 M479 310 Q461 305 461 320 Q479 329 479 310 M521 300 Q503 295 503 310 Q521 319 521 300" fill="none" stroke="#f0d47f" stroke-width="7"/>
+              <text x="500" y="388" text-anchor="middle" fill="#352b1d" font-family="serif" font-size="16" font-weight="600" letter-spacing="5">SOUND</text>
+              <g id="socket-musicbox-item" class="puzzle-hidden" pointer-events="none">
+                <rect x="465" y="263" width="70" height="53" rx="7" fill="#301a0d" stroke="#ffe18b" stroke-width="6"/>
+                <path d="M476 275 H524 M478 286 H522 M480 298 H520 M483 263 V316 M517 263 V316" stroke="#d6a94d" stroke-width="3"/>
+                <circle cx="500" cy="289" r="8" fill="#090807" stroke="#f1cd70" stroke-width="3"/>
+              </g>
             </g>
-            <g id="socket-touch" class="component-socket" data-action="insert-component" data-component="windingKey" role="button" tabindex="0" aria-label="Touch socket, empty">
-              <circle cx="500" cy="437" r="61" fill="#0c0b09" stroke="#695435" stroke-width="7"/>
-              <path d="M475 450 V412 Q475 399 487 399 V435 M487 425 V394 Q487 381 499 381 V433 M499 420 V397 Q499 385 511 385 V435 M511 421 Q535 421 535 445 Q535 468 506 473 Q478 472 469 452Z" fill="none" stroke="#8d7045" stroke-width="5" stroke-linejoin="round"/>
-              <text x="500" y="520" text-anchor="middle" fill="#705b3d" font-family="serif" font-size="15" letter-spacing="4">TOUCH</text>
+            <g id="socket-touch" class="component-socket desk-component-socket" data-action="insert-component" data-component="windingKey" role="button" tabindex="0" aria-label="Touch socket, empty">
+              <circle cx="725" cy="290" r="78" fill="#040505" stroke="#cda657" stroke-width="8"/>
+              <circle cx="725" cy="290" r="63" fill="none" stroke="#6f572c" stroke-width="3" stroke-dasharray="7 8"/>
+              <path d="M696 316 V271 Q696 257 709 257 V298 M709 286 V250 Q709 236 722 236 V297 M722 278 V253 Q722 240 735 240 V299 M735 278 Q760 278 760 303 Q760 328 729 334 Q700 332 690 315Z" fill="none" stroke="#f0d47f" stroke-width="7" stroke-linejoin="round"/>
+              <text x="725" y="388" text-anchor="middle" fill="#352b1d" font-family="serif" font-size="16" font-weight="600" letter-spacing="5">TOUCH</text>
+              <g id="socket-windingkey-item" class="puzzle-hidden" pointer-events="none">
+                <path d="M686 272 Q705 244 724 272 Q743 244 762 272 M691 276 Q705 299 719 276 M729 276 Q743 299 757 276 M724 278 V328 H762 M747 312 V340" fill="none" stroke="#ffe18b" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="724" cy="307" r="9" fill="#201305" stroke="#fff0aa" stroke-width="4"/>
+              </g>
             </g>
-            <text id="shaft-status" x="500" y="75" text-anchor="middle" fill="#b28a50" font-family="monospace" font-size="14" letter-spacing="3">THREE ABSENCES HOLD THE MECHANISM STILL</text>
           </svg>
         </div>
 
@@ -460,7 +601,7 @@
             <g id="drawer-open-tray" class="puzzle-hidden">
               <rect x="245" y="286" width="510" height="153" rx="8" fill="#080705" stroke="#a57936" stroke-width="6"/>
               <path d="M260 303 H740 M260 424 H740" stroke="#7a5626" stroke-width="3"/>
-              <g id="drawer-key" class="drawer-key" data-action="take-key" role="button" tabindex="0" aria-label="Take the brass door key">
+              <g id="drawer-key" class="drawer-key" data-action="take-key" role="button" tabindex="0" aria-label="Take the brass key">
                 <circle cx="451" cy="365" r="34" fill="none" stroke="#e8b840" stroke-width="12"/>
                 <path d="M484 365 H603 V384 H576 V401 H551 V384 H484" fill="#b88a38" stroke="#efc36b" stroke-width="5" stroke-linejoin="round"/>
                 <rect x="405" y="320" width="230" height="92" fill="transparent"/>
@@ -470,51 +611,211 @@
           </svg>
         </div>
 
-        <!-- Fixed right view: the rune-covered locked door -->
+        <!-- Fixed right view: the chamber of rhythm and resonance. -->
         <div id="room-door" class="room" aria-hidden="true">
-          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Iron door side of the clockwork workshop">
+          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="A dark clockwork sound chamber with a wall mechanism and floor trapdoor">
             <defs>
-              <linearGradient id="doorWall" x2="0" y2="1"><stop stop-color="#080707"/><stop offset=".68" stop-color="#27170d"/><stop offset="1" stop-color="#100b08"/></linearGradient>
-              <linearGradient id="ironFace" x2="1" y2="1"><stop stop-color="#302f2c"/><stop offset=".45" stop-color="#161719"/><stop offset="1" stop-color="#34302a"/></linearGradient>
-              <radialGradient id="doorLight"><stop stop-color="#ffae3a" stop-opacity=".4"/><stop offset="1" stop-color="#ffae3a" stop-opacity="0"/></radialGradient>
-              <radialGradient id="doorShade"><stop offset=".5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".75"/></radialGradient>
+              <radialGradient id="soundRoomGlow"><stop stop-color="#d4a14a" stop-opacity=".2"/><stop offset="1" stop-color="#d4a14a" stop-opacity="0"/></radialGradient>
             </defs>
-            <rect width="1000" height="600" fill="url(#doorWall)"/>
-            <polygon points="0,0 145,72 145,438 0,540" fill="#0d0908"/>
-            <polygon points="1000,0 855,72 855,438 1000,540" fill="#100b08"/>
-            <path d="M0 540 L145 438 H855 L1000 540 V600 H0Z" fill="#100b07" stroke="#4a2e16" stroke-width="3"/>
-            <path d="M145 438 L0 600 M855 438 L1000 600 M375 438 L310 600 M625 438 L690 600" stroke="#63411b" stroke-opacity=".42" stroke-width="3"/>
-            <circle cx="520" cy="225" r="360" fill="url(#doorLight)"/>
-            <!-- Brass lamps throw warm light over the ironwork -->
-            <path d="M220 30 V157 M780 30 V157" stroke="#5d421e" stroke-width="8"/>
-            <path d="M194 151 H246 L235 186 H205Z M754 151 H806 L795 186 H765Z" fill="#c8900a" stroke="#e8b840" stroke-width="3"/>
-            <circle cx="220" cy="193" r="115" fill="url(#doorLight)"/>
-            <circle cx="780" cy="193" r="115" fill="url(#doorLight)"/>
-            <!-- Iron arch, rivets, lock and abstract etched runes -->
-            <path d="M322 473 V208 Q322 73 500 73 Q678 73 678 208 V473Z" fill="#100d0b" stroke="#92672d" stroke-width="13"/>
-            <path d="M346 462 V207 Q346 98 500 98 Q654 98 654 207 V462Z" fill="url(#ironFace)" stroke="#6b5437" stroke-width="5"/>
-            <path d="M500 101 V463 M351 263 H649 M351 392 H649" stroke="#101112" stroke-width="12"/>
-            <path d="M365 111 Q500 47 635 111" fill="none" stroke="#d0a450" stroke-width="3" stroke-opacity=".7"/>
-            <g fill="#967340">
-              <circle cx="365" cy="220" r="5"/><circle cx="365" cy="300" r="5"/><circle cx="365" cy="430" r="5"/>
-              <circle cx="635" cy="220" r="5"/><circle cx="635" cy="300" r="5"/><circle cx="635" cy="430" r="5"/>
+            <rect width="1000" height="600" fill="#020303"/>
+            <g fill="none" stroke="#cba354" stroke-linecap="round">
+              <path d="M112 0 V430 M126 0 V430 M874 0 V430 M888 0 V430" stroke-width="5" opacity=".68"/>
+              <path d="M180 62 H820 M180 83 H820 M42 145 H98 M902 145 H958 M44 356 H98 M902 356 H956" stroke-width="4" opacity=".5"/>
             </g>
-            <g fill="none" stroke="#c28b3b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M405 192 L427 156 L449 192 M427 156 V223"/>
-              <path d="M474 157 V224 M474 157 L518 223 M518 157 V223"/>
-              <path d="M551 160 L580 160 L551 224 L580 224 M565 160 V224"/>
-              <path d="M433 317 L454 286 L475 317 L454 348Z M527 286 V349 M527 286 L560 317 L527 349"/>
+            <circle cx="500" cy="250" r="390" fill="url(#soundRoomGlow)"/>
+            <path d="M0 431 H1000 V600 H0Z" fill="#050504" stroke="#c49a49" stroke-width="5"/>
+            <path d="M0 478 H1000 M0 535 H1000 M180 431 L115 600 M500 431 V600 M820 431 L885 600" stroke="#80612e" stroke-width="3" opacity=".62"/>
+
+            <g aria-label="Antique wall rhythm mechanism">
+              <path d="M167 108 H451 V345 H167Z" fill="#030404" stroke="#11110e" stroke-width="15"/>
+              <path d="M172 113 H446 V340 H172Z" fill="none" stroke="#d0a754" stroke-width="7"/>
+              <circle cx="270" cy="226" r="72" fill="#070706" stroke="#c79e4d" stroke-width="8" stroke-dasharray="14 7"/>
+              <circle cx="270" cy="226" r="45" fill="none" stroke="#80612f" stroke-width="5"/>
+              <path d="M270 158 V294 M202 226 H338 M222 178 L318 274 M318 178 L222 274" stroke="#b98f42" stroke-width="6"/>
+              <circle cx="270" cy="226" r="14" fill="#e1b75d"/>
+              <circle cx="382" cy="208" r="38" fill="#080807" stroke="#c79e4d" stroke-width="7" stroke-dasharray="10 6"/>
+              <path d="M382 171 V245 M345 208 H419" stroke="#a67e3b" stroke-width="5"/>
+              <path d="M362 117 V169 L395 183" fill="none" stroke="#f0cf76" stroke-width="10" stroke-linecap="round"/>
+              <circle cx="397" cy="185" r="13" fill="#d39d3c" stroke="#fff0ac" stroke-width="4"/>
+              <path d="M333 292 V263 L374 252 V284 M333 292 Q316 287 316 301 Q333 310 333 292 M374 284 Q357 279 357 293 Q374 302 374 284" fill="none" stroke="#f0cf76" stroke-width="6"/>
             </g>
-            <circle cx="588" cy="377" r="28" fill="#221b13" stroke="#bc8740" stroke-width="5"/>
-            <path d="M576 377 H600 M588 365 V389" stroke="#e8b840" stroke-width="4"/>
-            <path d="M290 471 H710" stroke="#a87531" stroke-width="9"/>
-            <circle cx="500" cy="290" r="550" fill="url(#doorShade)"/>
-            <g id="door-open-view" class="puzzle-hidden" pointer-events="none">
-              <path d="M346 462 V207 Q346 98 500 98 Q654 98 654 207 V462Z" fill="#050403" stroke="#bd8740" stroke-width="7"/>
-              <path d="M654 123 L760 96 V462 H654Z" fill="#292620" stroke="#a57936" stroke-width="5"/>
+            <text x="309" y="382" text-anchor="middle" fill="#c9a766" font-family="serif" font-size="18" font-style="italic" letter-spacing="2">Listen. Time remembers its rhythm.</text>
+
+            <g aria-label="Iron floor trapdoor with a central brass striking plate">
+              <path d="M548 454 L849 454 L905 570 H492Z" fill="#070807" stroke="#11110f" stroke-width="15" stroke-linejoin="round"/>
+              <path d="M548 454 L849 454 L905 570 H492Z" fill="none" stroke="#cda454" stroke-width="7" stroke-linejoin="round"/>
+              <path d="M585 480 H820 M558 524 H864" stroke="#74582b" stroke-width="4"/>
+              <ellipse cx="700" cy="512" rx="68" ry="38" fill="#9a6d25" stroke="#f0ce72" stroke-width="8"/>
+              <ellipse cx="700" cy="512" rx="44" ry="24" fill="#3b270d" stroke="#c99d47" stroke-width="4"/>
             </g>
-            <path class="hotspot" d="M346 462 V207 Q346 98 500 98 Q654 98 654 207 V462Z" data-action="zoom-door" role="button" tabindex="0" aria-label="Look closely at the locked iron door"/>
-            <rect class="hotspot" x="380" y="140" width="240" height="215" data-action="zoom-door" role="button" tabindex="0" aria-label="Look closely at the door runes"/>
+            <!-- Frozen vessel occupies the clear right wall above the trapdoor. -->
+            <g aria-label="A frost-covered antique glass vessel containing a golden winding key">
+              <path d="M735 78 V122 M865 78 V122" stroke="#cda452" stroke-width="13"/>
+              <path d="M716 89 H884 M732 118 H868" stroke="#6e5229" stroke-width="8"/>
+              <path d="M745 116 Q720 155 727 316 Q730 397 800 414 Q870 397 873 316 Q880 155 855 116Z" fill="#9de3ee" fill-opacity=".23" stroke="#e5fbff" stroke-opacity=".75" stroke-width="8"/>
+              <path d="M747 184 Q800 167 853 184 V340 Q800 365 747 340Z" fill="#68cde4" fill-opacity=".48"/>
+              <path d="M731 190 Q753 170 778 181 M835 165 Q857 181 868 210 M741 272 Q756 258 769 267" fill="none" stroke="#e9fcff" stroke-width="5" opacity=".7"/>
+              <g fill="#dffaff" opacity=".7"><circle cx="770" cy="304" r="5"/><circle cx="836" cy="259" r="4"/><circle cx="801" cy="218" r="3"/></g>
+              <path d="M773 310 Q786 291 799 310 Q812 291 825 310 M777 313 Q786 327 795 313 M803 313 Q812 327 821 313 M799 314 V352 H827" fill="none" stroke="#f4cd68" stroke-width="5" opacity=".72"/>
+              <path d="M710 407 H890 V432 H710Z" fill="#030404" stroke="#c79e4d" stroke-width="6"/>
+              <circle cx="800" cy="420" r="12" fill="#c99c43"/>
+            </g>
+            <rect class="hotspot object-hotspot" x="145" y="90" width="330" height="280" data-action="zoom-sound-device" role="button" tabindex="0" aria-label="Inspect the antique wall rhythm mechanism"/>
+            <path class="hotspot object-hotspot" d="M548 439 L866 439 L926 581 H472Z" data-action="zoom-trapdoor" role="button" tabindex="0" aria-label="Inspect the floor trapdoor and its striking plate"/>
+            <rect class="hotspot object-hotspot" x="700" y="65" width="195" height="375" data-action="zoom-frozen" role="button" tabindex="0" aria-label="Inspect the frost-covered glass vessel"/>
+          </svg>
+        </div>
+
+        <!-- Wall mechanism close-up. Clicking it performs the five-tick clue. -->
+        <div id="room-sound-device-detail" class="room" aria-hidden="true">
+          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Close-up of the antique wall rhythm mechanism">
+            <rect width="1000" height="600" fill="#020303"/>
+            <g fill="none" stroke="#cba354"><path d="M90 0 V600 M108 0 V600 M892 0 V600 M910 0 V600" stroke-width="5" opacity=".58"/><path d="M154 70 H846 M154 94 H846" stroke-width="4" opacity=".42"/></g>
+            <rect x="202" y="92" width="596" height="390" fill="#030404" stroke="#12110e" stroke-width="20"/>
+            <rect x="212" y="102" width="576" height="370" fill="none" stroke="#d0a754" stroke-width="9"/>
+            <g id="sound-device-gears" fill="none" stroke="#c59b49">
+              <circle cx="386" cy="283" r="126" stroke-width="15" stroke-dasharray="20 9"/>
+              <circle cx="386" cy="283" r="96" stroke-width="7"/>
+              <path d="M386 187 V379 M290 283 H482 M318 215 L454 351 M454 215 L318 351" stroke-width="10"/>
+              <circle cx="386" cy="283" r="27" fill="#080807" stroke-width="7"/>
+              <circle cx="625" cy="306" r="79" stroke-width="12" stroke-dasharray="14 7"/>
+              <circle cx="625" cy="306" r="52" stroke-width="6"/>
+              <path d="M625 254 V358 M573 306 H677 M588 269 L662 343 M662 269 L588 343" stroke-width="8"/>
+            </g>
+            <g id="sound-hammer" class="sound-hammer">
+              <path d="M594 123 V218 L646 245" fill="none" stroke="#f0cf76" stroke-width="17" stroke-linecap="round"/>
+              <rect x="632" y="225" width="70" height="42" rx="8" fill="#8f6120" stroke="#ffe9a0" stroke-width="7"/>
+            </g>
+            <path d="M540 414 V359 L601 342 V393 M540 414 Q512 405 512 428 Q540 443 540 414 M601 393 Q573 384 573 407 Q601 422 601 393" fill="none" stroke="#f0cf76" stroke-width="10"/>
+            <text x="500" y="532" text-anchor="middle" fill="#c9a766" font-family="serif" font-size="21" font-style="italic" letter-spacing="3">Listen. Time remembers its rhythm.</text>
+            <rect class="hotspot sound-device-hitarea" x="180" y="75" width="640" height="430" data-action="play-sound-clue" role="button" tabindex="0" aria-label="Play the wall mechanism's rhythm"/>
+          </svg>
+        </div>
+
+        <!-- Floor rhythm close-up and hidden music-box compartment. -->
+        <div id="room-trapdoor-detail" class="room" aria-hidden="true">
+          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Close-up of the floor trapdoor's brass striking plate">
+            <defs><radialGradient id="plateBrass"><stop stop-color="#f0cf76"/><stop offset=".42" stop-color="#b17a28"/><stop offset="1" stop-color="#42290a"/></radialGradient></defs>
+            <rect width="1000" height="600" fill="#020303"/>
+            <path d="M0 80 H1000 V600 H0Z" fill="#070706" stroke="#c39a4a" stroke-width="7"/>
+            <path d="M0 175 H1000 M0 310 H1000 M0 465 H1000 M170 80 L80 600 M420 80 L390 600 M690 80 L760 600 M900 80 L990 600" stroke="#6f5429" stroke-width="4" opacity=".55"/>
+            <g id="trapdoor-gears" class="trapdoor-gears" aria-hidden="true">
+              <circle cx="365" cy="392" r="76" fill="#050505" stroke="#c69c4b" stroke-width="10" stroke-dasharray="15 8"/>
+              <path d="M365 330 V454 M303 392 H427 M321 348 L409 436 M409 348 L321 436" stroke="#9f7938" stroke-width="8"/>
+              <circle cx="644" cy="405" r="61" fill="#050505" stroke="#b88e43" stroke-width="9" stroke-dasharray="12 7"/>
+              <path d="M644 354 V456 M593 405 H695 M608 369 L680 441 M680 369 L608 441" stroke="#8e6c34" stroke-width="7"/>
+            </g>
+            <g id="music-compartment" class="music-compartment">
+              <rect x="258" y="218" width="484" height="246" rx="20" fill="#010101" stroke="#d0a754" stroke-width="10"/>
+              <path d="M282 244 H718 V438 H282Z" fill="#100b07" stroke="#5f4524" stroke-width="5"/>
+              <g id="hidden-music-box" class="hidden-music-box" data-action="take-music-box" role="button" tabindex="0" aria-label="Take the antique music box">
+                <rect x="397" y="290" width="206" height="118" rx="14" fill="#351c0e" stroke="#f0c96b" stroke-width="9"/>
+                <path d="M407 305 H593 M407 390 H593 M424 290 V408 M576 290 V408" stroke="#b88937" stroke-width="5"/>
+                <path d="M449 331 Q500 297 551 331 L538 374 Q500 395 462 374Z" fill="none" stroke="#edc865" stroke-width="6"/>
+                <circle cx="500" cy="350" r="15" fill="#080706" stroke="#ffe59a" stroke-width="5"/>
+                <path d="M603 334 H641 V351 H618 V369" fill="none" stroke="#e6bd5b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                <g fill="#ffe59a"><circle cx="410" cy="303" r="6"/><circle cx="590" cy="303" r="6"/><circle cx="410" cy="395" r="6"/><circle cx="590" cy="395" r="6"/></g>
+              </g>
+            </g>
+            <g id="trapdoor-lid" class="trapdoor-lid">
+              <rect x="210" y="137" width="580" height="338" rx="22" fill="#050605" stroke="#11110e" stroke-width="20"/>
+              <rect x="220" y="147" width="560" height="318" rx="15" fill="none" stroke="#cfa654" stroke-width="10"/>
+              <path d="M251 186 H749 M250 424 H750 M273 164 V448 M727 164 V448" stroke="#73572b" stroke-width="5"/>
+              <g id="striking-plate" class="striking-plate" data-action="strike-rhythm" role="button" tabindex="0" aria-label="Strike the circular brass plate to reproduce the rhythm">
+                <circle cx="500" cy="305" r="115" fill="#171006" stroke="#090806" stroke-width="18"/>
+                <circle cx="500" cy="305" r="99" fill="url(#plateBrass)" stroke="#f2d47e" stroke-width="9"/>
+                <circle cx="500" cy="305" r="68" fill="none" stroke="#6f4815" stroke-width="5"/>
+                <path d="M500 218 V392 M413 305 H587 M438 243 L562 367 M562 243 L438 367" stroke="#7d531a" stroke-width="6" opacity=".65"/>
+                <circle cx="500" cy="305" r="18" fill="#2c1b08" stroke="#ffe391" stroke-width="5"/>
+                <circle class="plate-hitarea" cx="500" cy="305" r="130" fill="transparent"/>
+              </g>
+            </g>
+            <text id="rhythm-tap-count" x="500" y="548" text-anchor="middle" fill="#d2ad60" font-family="monospace" font-size="18" letter-spacing="8">○ ○ ○ ○ ○</text>
+          </svg>
+        </div>
+
+        <!-- The Frozen Heart: locked drain valve and submerged winding key. -->
+        <div id="room-frozen-detail" class="room" aria-hidden="true">
+          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Close-up of the frozen glass vessel, drainage valve and winding key">
+            <defs>
+              <linearGradient id="frozenGlass" x1="0" x2="1"><stop stop-color="#dffaff" stop-opacity=".58"/><stop offset=".2" stop-color="#78b9c8" stop-opacity=".16"/><stop offset=".72" stop-color="#eaffff" stop-opacity=".3"/><stop offset="1" stop-color="#7eb5c0" stop-opacity=".5"/></linearGradient>
+              <linearGradient id="coldLiquid" x2="0" y2="1"><stop stop-color="#b9f5ff" stop-opacity=".78"/><stop offset=".4" stop-color="#58cbe5" stop-opacity=".72"/><stop offset="1" stop-color="#176c8f" stop-opacity=".85"/></linearGradient>
+              <clipPath id="frozenVesselClip"><path d="M282 92 Q244 151 254 407 Q259 518 500 535 Q741 518 746 407 Q756 151 718 92Z"/></clipPath>
+            </defs>
+            <rect width="1000" height="600" fill="#020303"/>
+            <g fill="none" stroke="#caa253"><path d="M96 0 V600 M114 0 V600 M886 0 V600 M904 0 V600" stroke-width="5" opacity=".55"/><path d="M156 64 H844 M156 88 H844" stroke-width="4" opacity=".42"/></g>
+            <path d="M242 71 H758 V103 H242Z" fill="#050606" stroke="#d0a754" stroke-width="9"/>
+            <path d="M270 91 Q231 147 242 415 Q248 535 500 552 Q752 535 758 415 Q769 147 730 91Z" fill="#071014" stroke="#11110e" stroke-width="22"/>
+
+            <g id="frozen-key" class="frozen-key" data-action="take-winding-key" role="button" tabindex="0" aria-label="Try to take the submerged golden winding key">
+              <path d="M421 412 Q451 368 481 412 Q511 368 541 412 M429 418 Q451 453 473 418 M489 418 Q511 453 533 418 M481 421 V493 H548 M526 472 V515" fill="none" stroke="#ffd66f" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="481" cy="464" r="18" fill="#261706" stroke="#fff0a5" stroke-width="7"/>
+              <path d="M470 464 H492 M481 453 V475" stroke="#e8b84f" stroke-width="5"/>
+              <rect x="395" y="360" width="180" height="170" fill="transparent"/>
+            </g>
+
+            <g clip-path="url(#frozenVesselClip)" pointer-events="none">
+              <g id="frozen-liquid" class="frozen-liquid">
+                <path class="cold-liquid-body" d="M225 153 Q330 135 426 154 T775 153 V570 H225Z" fill="url(#coldLiquid)"/>
+                <path class="cold-liquid-surface" d="M225 153 Q330 135 426 154 T775 153" fill="none" stroke="#d5fbff" stroke-width="8" opacity=".8"/>
+                <g class="frozen-bubbles" fill="#e9fdff" fill-opacity=".58" stroke="#fff" stroke-opacity=".45">
+                  <circle cx="345" cy="364" r="11"/><circle cx="637" cy="313" r="8"/><circle cx="418" cy="267" r="6"/><circle cx="568" cy="410" r="9"/>
+                </g>
+              </g>
+              <g id="frozen-frost" class="frozen-frost" fill="none" stroke="#edffff" stroke-linecap="round">
+                <path d="M275 139 Q312 104 352 132 M648 121 Q696 111 732 151 M267 263 Q296 234 320 249 M675 229 Q712 250 738 292" stroke-width="13" opacity=".7"/>
+                <path d="M294 116 L318 145 M705 126 L679 158 M281 291 L311 272 M717 318 L687 292" stroke-width="6" opacity=".85"/>
+              </g>
+            </g>
+            <path d="M282 92 Q244 151 254 407 Q259 518 500 535 Q741 518 746 407 Q756 151 718 92Z" fill="url(#frozenGlass)" stroke="#dffaff" stroke-opacity=".8" stroke-width="9" pointer-events="none"/>
+            <path d="M305 121 Q278 188 286 391" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="13" stroke-linecap="round" pointer-events="none"/>
+            <g class="condensation" fill="#efffff" opacity=".58" pointer-events="none"><circle cx="329" cy="220" r="6"/><circle cx="681" cy="181" r="5"/><circle cx="704" cy="345" r="7"/><circle cx="304" cy="382" r="4"/></g>
+
+            <path d="M500 537 V568 H796 V437" fill="none" stroke="#18140d" stroke-width="28"/>
+            <path d="M500 537 V568 H796 V437" fill="none" stroke="#b4873d" stroke-width="15"/>
+            <path id="drain-stream" class="drain-stream" d="M500 530 V568 H790" fill="none" stroke="#65d7ef" stroke-width="9" opacity="0"/>
+            <g class="drain-droplets" fill="#c9f8ff" pointer-events="none">
+              <circle cx="548" cy="568" r="5"/><circle cx="620" cy="568" r="4"/><circle cx="692" cy="568" r="5"/>
+            </g>
+            <g id="drain-valve" class="drain-valve" data-action="operate-valve" role="button" tabindex="0" aria-label="Locked brass drainage valve">
+              <circle cx="796" cy="407" r="76" fill="#060606" stroke="#c79b45" stroke-width="11"/>
+              <g id="valve-wheel" class="valve-wheel">
+                <circle cx="796" cy="407" r="51" fill="none" stroke="#e1b354" stroke-width="12" stroke-dasharray="13 7"/>
+                <path d="M796 352 V462 M741 407 H851 M757 368 L835 446 M835 368 L757 446" stroke="#d2a44a" stroke-width="9"/>
+                <circle cx="796" cy="407" r="15" fill="#3a2308" stroke="#ffe28a" stroke-width="6"/>
+              </g>
+              <g id="valve-lock">
+                <rect x="772" y="390" width="48" height="42" rx="7" fill="#120e08" stroke="#f0c968" stroke-width="5"/>
+                <path d="M781 390 V378 Q781 357 796 357 Q811 357 811 378 V390" fill="none" stroke="#f0c968" stroke-width="6"/>
+                <circle cx="796" cy="408" r="6" fill="#e8b84f"/>
+              </g>
+              <circle class="valve-hitarea" cx="796" cy="407" r="94" fill="transparent"/>
+            </g>
+            <rect x="212" y="20" width="576" height="58" rx="5" fill="#050505" stroke="#caa253" stroke-width="5"/>
+            <text x="500" y="45" text-anchor="middle" fill="#d4b36e" font-family="serif" font-size="17" letter-spacing="2">Only when the vessel runs dry</text>
+            <text x="500" y="67" text-anchor="middle" fill="#d4b36e" font-family="serif" font-size="17" letter-spacing="2">may its heart be claimed.</text>
+          </svg>
+        </div>
+
+        <!-- Inventory clue inspection: the paper remains available after reading. -->
+        <div id="room-note-detail" class="room" aria-hidden="true">
+          <svg class="room-svg" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Close-up of a worn paper note marked 1158">
+            <defs>
+              <radialGradient id="noteLight"><stop stop-color="#d2a44d" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+              <linearGradient id="paperAge" x2="1" y2="1"><stop stop-color="#f0e8d0"/><stop offset=".48" stop-color="#cfc3a3"/><stop offset="1" stop-color="#9f906c"/></linearGradient>
+              <filter id="paperShadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="18" stdDeviation="14" flood-color="#000" flood-opacity=".9"/></filter>
+            </defs>
+            <rect width="1000" height="600" fill="#020303"/>
+            <g fill="none" stroke="#caa253" opacity=".52"><path d="M98 0 V600 M118 0 V600 M882 0 V600 M902 0 V600" stroke-width="5"/><path d="M160 72 H840 M160 94 H840" stroke-width="3"/></g>
+            <circle cx="500" cy="300" r="390" fill="url(#noteLight)"/>
+            <g filter="url(#paperShadow)" transform="rotate(-2 500 304)">
+              <path d="M292 90 Q318 72 353 84 L715 72 Q738 91 724 122 L741 486 Q716 519 681 504 L314 520 Q274 501 292 465 L274 128 Q269 103 292 90Z" fill="url(#paperAge)" stroke="#17130c" stroke-width="14"/>
+              <path d="M319 133 Q479 116 695 126 M310 455 Q497 475 708 449" fill="none" stroke="#8b7449" stroke-width="4" opacity=".48"/>
+              <path d="M339 199 H662 M335 379 H668" stroke="#786440" stroke-width="3" opacity=".32"/>
+              <text x="500" y="322" text-anchor="middle" fill="#2a2117" font-family="Georgia, serif" font-size="116" font-weight="700" letter-spacing="28">1158</text>
+              <path d="M367 349 Q500 371 633 345" fill="none" stroke="#5a4630" stroke-width="5" opacity=".62"/>
+              <g fill="#77572d" opacity=".38"><circle cx="338" cy="150" r="8"/><circle cx="678" cy="421" r="12"/><circle cx="648" cy="170" r="5"/><circle cx="365" cy="430" r="6"/></g>
+            </g>
           </svg>
         </div>
 
@@ -565,9 +866,9 @@
         <p id="game-message" class="game-message" role="status" aria-live="polite"></p>
 
         <nav class="view-nav" aria-label="Room views">
-          <button id="turn-left" class="view-nav-button" type="button" aria-label="Turn to the left view" onclick="turnView(-1)">←</button>
-          <button id="go-back" class="view-nav-button" type="button" aria-label="Return from close-up to the room" onclick="goBack()" hidden>↓</button>
-          <button id="turn-right" class="view-nav-button" type="button" aria-label="Turn to the right view" onclick="turnView(1)">→</button>
+          <button id="turn-left" class="view-nav-button" type="button" aria-label="Turn to the left view" onclick="turnView(-1)">◀</button>
+          <button id="go-back" class="view-nav-button" type="button" aria-label="Return from close-up to the room" onclick="goBack()" hidden>▼</button>
+          <button id="turn-right" class="view-nav-button" type="button" aria-label="Turn to the right view" onclick="turnView(1)">▶</button>
         </nav>
 
       </div><!-- /.room-viewport -->
@@ -577,28 +878,50 @@
     <aside class="inventory-bar" aria-label="Inventory">
       <span class="inventory-name">INVENTORY</span>
       <div class="inventory-slots">
-        <button id="inventory-key" class="inventory-slot" type="button" aria-label="Brass door key" aria-pressed="false" disabled>
+        <button id="inventory-note" class="inventory-slot" type="button" aria-label="Inspect the paper note" aria-pressed="false" disabled hidden>
+          <svg id="inventory-note-icon" viewBox="0 0 54 42" aria-hidden="true">
+            <path d="M10 4 H39 L46 11 V38 H10Z" fill="#d9cfb4" stroke="currentColor" stroke-width="3"/>
+            <path d="M39 4 V12 H46 M17 20 H39 M17 27 H35" fill="none" stroke="#6b5837" stroke-width="3"/>
+            <text x="27" y="17" text-anchor="middle" fill="#2b2116" font-family="serif" font-size="8" font-weight="700">1158</text>
+          </svg>
+        </button>
+        <button id="inventory-key" class="inventory-slot" type="button" aria-label="Brass key" aria-pressed="false" disabled hidden>
           <svg id="inventory-key-icon" class="puzzle-hidden" viewBox="0 0 58 38" aria-hidden="true">
             <circle cx="15" cy="19" r="9" fill="none" stroke="currentColor" stroke-width="5"/>
             <path d="M24 19 H51 V25 H43 V31 H36 V25 H24" fill="currentColor"/>
           </svg>
         </button>
-        <button id="inventory-glasses" class="inventory-slot" type="button" aria-label="Antique glasses" aria-pressed="false" disabled>
+        <button id="inventory-glasses" class="inventory-slot" type="button" aria-label="Antique glasses" aria-pressed="false" disabled hidden>
           <svg id="inventory-glasses-icon" class="puzzle-hidden" viewBox="0 0 64 38" aria-hidden="true">
             <circle cx="18" cy="20" r="11" fill="#70a5a2" fill-opacity=".22" stroke="currentColor" stroke-width="4"/>
             <circle cx="46" cy="20" r="11" fill="#70a5a2" fill-opacity=".22" stroke="currentColor" stroke-width="4"/>
             <path d="M29 18 Q32 15 35 18 M7 17 L2 13 M57 17 L62 13" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
           </svg>
         </button>
-        <span class="inventory-slot"></span>
-        <span class="inventory-slot"></span>
-        <span class="inventory-slot"></span>
+        <button id="inventory-musicbox" class="inventory-slot" type="button" aria-label="Antique music box" aria-pressed="false" disabled hidden>
+          <svg id="inventory-musicbox-icon" class="puzzle-hidden" viewBox="0 0 64 42" aria-hidden="true">
+            <rect x="10" y="8" width="44" height="28" rx="4" fill="#321a0d" stroke="currentColor" stroke-width="4"/>
+            <path d="M16 15 H48 M16 29 H48 M21 8 V36 M43 8 V36" stroke="currentColor" stroke-width="2"/>
+            <circle cx="32" cy="22" r="5" fill="#090807" stroke="currentColor" stroke-width="2"/>
+            <path d="M54 16 H62 V23 H57 V30" fill="none" stroke="currentColor" stroke-width="3"/>
+          </svg>
+        </button>
+        <button id="inventory-windingkey" class="inventory-slot" type="button" aria-label="Golden winding key" aria-pressed="false" disabled hidden>
+          <svg id="inventory-windingkey-icon" class="puzzle-hidden" viewBox="0 0 64 42" aria-hidden="true">
+            <path d="M8 15 Q16 3 24 15 Q32 3 40 15 M10 17 Q16 27 22 17 M26 17 Q32 27 38 17 M24 18 V36 H55 M45 28 V41" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="24" cy="29" r="5" fill="#1b1208" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </button>
       </div>
       <span id="inventory-label" class="inventory-empty">Nothing collected yet</span>
     </aside>
 
   </div><!-- /#game-screen -->
 
-  <script src="game.js?v=16"></script>
+  <div id="ending-placeholder" class="ending-placeholder" aria-hidden="true">
+    <p>The mechanism exhales into darkness.</p>
+  </div>
+
+  <script src="game.js?v=26"></script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 const views = [
   { id: 'gears', name: 'Gear Wall' },
   { id: 'workshop', name: 'The Workshop' },
-  { id: 'door', name: 'Iron Door' },
+  { id: 'door', name: 'Chamber of Resonance' },
 ];
 
 const detailNames = {
@@ -10,7 +10,11 @@ const detailNames = {
   door: 'Iron Door · Lock',
   painting: 'Gear Wall · Bell Tower Painting',
   clock: 'Gear Wall · Adjustable Clock',
-  shaft: 'Workshop · Central Drive Shaft',
+  shaft: 'Workshop · Repair Desk',
+  'sound-device': 'Resonance Chamber · Wall Mechanism',
+  trapdoor: 'Resonance Chamber · Floor Plate',
+  frozen: 'Resonance Chamber · The Frozen Heart',
+  note: 'Inventory · Worn Paper',
 };
 
 const game = {
@@ -19,7 +23,11 @@ const game = {
   transitioning: false,
   drawerDigits: [0, 0, 0, 0],
   drawerOpen: false,
+  paperCollected: false,
+  inventoryOrder: [],
   clock: { hour: 12, minute: 30, solved: false },
+  soundPuzzle: { cluePlaying: false, taps: [], lastTap: 0, solved: false },
+  frozen: { valveUnlocked: false, valveRotations: 0, drainageStarted: false, drained: false },
   puzzles: { visual: false, sound: false, touch: false },
   components: {
     glasses: { collected: false, inserted: false },
@@ -27,10 +35,15 @@ const game = {
     windingKey: { collected: false, inserted: false },
   },
   keyCollected: false,
+  keyUsed: false,
   selectedItem: null,
   repairProgress: 0,
+  pendulumFinalComplete: false,
+  doorAccessible: false,
   doorUnlocked: false,
 };
+
+const drawerSolution = '1158';
 
 const fade = document.getElementById('scene-fade');
 const bgm = document.getElementById('bgm');
@@ -45,6 +58,13 @@ const gameMessage = document.getElementById('game-message');
 let introActive = false;
 let introWatchdog = null;
 let messageTimer = null;
+let renderedPendulumProgress = 0;
+let pendulumAnimationRunning = false;
+const pendingPendulumSteps = [];
+const soundRhythm = ['short', 'short', 'long', 'short'];
+const soundClueTimes = [0, 450, 900, 1950, 2400];
+let effectsAudioContext = null;
+let soundClueTimers = [];
 
 function ensureBgm() {
   if (bgm.paused && !bgm.muted) bgm.play().catch(() => {});
@@ -112,6 +132,7 @@ function displayView(index) {
   game.currentView = index;
   game.closeUp = null;
   renderView();
+  if (index === 1) window.setTimeout(playPendingPendulumStep, 80);
 }
 
 function renderView() {
@@ -129,7 +150,7 @@ function renderView() {
   });
   const roomName = game.closeUp
     ? (game.closeUp === 'door' && game.doorUnlocked ? 'Iron Door · Open' : detailNames[game.closeUp])
-    : (game.currentView === 2 && game.doorUnlocked ? 'Iron Door · Open' : views[game.currentView].name);
+    : views[game.currentView].name;
   document.getElementById('hud-room').textContent = roomName;
   document.getElementById('go-back').hidden = !game.closeUp;
   document.getElementById('turn-left').hidden = !!game.closeUp;
@@ -180,8 +201,12 @@ function turnView(direction) {
 
 function goBack() {
   if (game.transitioning || !game.closeUp) return;
+  const previousCloseUp = game.closeUp;
   game.closeUp = null;
   renderView();
+  if (previousCloseUp === 'shaft' && game.currentView === 1) {
+    window.setTimeout(playPendingPendulumStep, 80);
+  }
 }
 
 function openCloseUp(name, requiredView) {
@@ -204,7 +229,7 @@ document.querySelectorAll('.puzzle-wheel').forEach(wheel => {
     game.drawerDigits[index] = (game.drawerDigits[index] + 1) % 10;
     wheel.querySelector('text').textContent = String(game.drawerDigits[index]);
     wheel.setAttribute('aria-label', `Digit ${index + 1}: ${game.drawerDigits[index]}. Click to advance`);
-    if (game.drawerDigits.join('') === '1158') openDrawer();
+    if (drawerSolution && game.drawerDigits.join('') === drawerSolution) openDrawer();
   };
   wheel.addEventListener('click', advance);
   wheel.addEventListener('keydown', event => {
@@ -216,11 +241,17 @@ document.querySelectorAll('.puzzle-wheel').forEach(wheel => {
 });
 
 const inventoryItems = {
+  note: {
+    button: document.getElementById('inventory-note'),
+    icon: document.getElementById('inventory-note-icon'),
+    name: 'Worn paper',
+    available: () => game.paperCollected,
+  },
   key: {
     button: document.getElementById('inventory-key'),
     icon: document.getElementById('inventory-key-icon'),
     name: 'Brass key',
-    available: () => game.keyCollected,
+    available: () => game.keyCollected && !game.keyUsed,
   },
   glasses: {
     button: document.getElementById('inventory-glasses'),
@@ -228,23 +259,51 @@ const inventoryItems = {
     name: 'Antique glasses',
     available: () => game.components.glasses.collected && !game.components.glasses.inserted,
   },
+  musicBox: {
+    button: document.getElementById('inventory-musicbox'),
+    icon: document.getElementById('inventory-musicbox-icon'),
+    name: 'Antique music box',
+    available: () => game.components.musicBox.collected && !game.components.musicBox.inserted,
+  },
+  windingKey: {
+    button: document.getElementById('inventory-windingkey'),
+    icon: document.getElementById('inventory-windingkey-icon'),
+    name: 'Golden winding key',
+    available: () => game.components.windingKey.collected && !game.components.windingKey.inserted,
+  },
 };
+
+function addInventoryItem(id) {
+  if (!game.inventoryOrder.includes(id)) game.inventoryOrder.push(id);
+}
+
+function removeInventoryItem(id) {
+  const index = game.inventoryOrder.indexOf(id);
+  if (index !== -1) game.inventoryOrder.splice(index, 1);
+  if (game.selectedItem === id) game.selectedItem = null;
+}
 
 function renderInventory() {
   Object.entries(inventoryItems).forEach(([id, item]) => {
-    const available = item.available();
+    const available = item.available() && game.inventoryOrder.includes(id);
+    item.button.hidden = !available;
     item.button.disabled = !available;
     item.button.classList.toggle('selected', game.selectedItem === id);
     item.button.setAttribute('aria-pressed', String(game.selectedItem === id));
     item.icon.classList.toggle('puzzle-hidden', !available);
+  });
+  const slotContainer = document.querySelector('.inventory-slots');
+  game.inventoryOrder.forEach(id => {
+    const item = inventoryItems[id];
+    if (item && item.available()) slotContainer.appendChild(item.button);
   });
   const label = document.getElementById('inventory-label');
   if (game.selectedItem && inventoryItems[game.selectedItem]) {
     label.textContent = `${inventoryItems[game.selectedItem].name} · selected`;
   } else if (Object.values(inventoryItems).some(item => item.available())) {
     label.textContent = 'Select an item to inspect or use it';
-  } else if (game.components.glasses.inserted) {
-    label.textContent = 'Glasses fitted to the drive shaft';
+  } else if (game.repairProgress > 0) {
+    label.textContent = `${game.repairProgress} of 3 components fitted to the repair desk`;
   } else {
     label.textContent = 'Nothing collected yet';
   }
@@ -253,20 +312,42 @@ function renderInventory() {
 Object.entries(inventoryItems).forEach(([id, item]) => {
   item.button.addEventListener('click', () => {
     if (!item.available()) return;
+    if (id === 'note') {
+      game.selectedItem = null;
+      game.closeUp = 'note';
+      renderInventory();
+      renderView();
+      showMessage('The worn paper bears four deliberate figures: 1158.');
+      return;
+    }
     game.selectedItem = game.selectedItem === id ? null : id;
     renderInventory();
     if (game.selectedItem) {
-      showMessage(id === 'glasses'
-        ? 'Fine brass spectacles. Their pale lenses catch details the eye misses.'
-        : 'A worn brass key, cut for an older mechanism.');
+      const descriptions = {
+        glasses: 'Fine brass spectacles. Their pale lenses catch details the eye misses.',
+        musicBox: 'A miniature music box of dark wood and intricate brasswork.',
+        windingKey: 'An ornate golden winding key, cold from the heart of the vessel.',
+        key: 'A worn brass key, cut for an older mechanism.',
+      };
+      showMessage(descriptions[id]);
     }
   });
 });
+
+function takePaperNote() {
+  if (game.transitioning || game.currentView !== 1 || game.closeUp || game.paperCollected) return;
+  game.paperCollected = true;
+  document.getElementById('floor-note').classList.add('puzzle-hidden');
+  addInventoryItem('note');
+  renderInventory();
+  showMessage('You pick up a brittle scrap of paper. Its ink has not entirely faded.');
+}
 
 function takeKey() {
   if (game.transitioning || game.closeUp !== 'drawer' || !game.drawerOpen || game.keyCollected) return;
   game.keyCollected = true;
   document.getElementById('drawer-key').classList.add('puzzle-hidden');
+  addInventoryItem('key');
   renderInventory();
   showMessage('The brass key joins your inventory. It does not fit the final lock.');
 }
@@ -318,19 +399,306 @@ function takeGlasses() {
   if (game.transitioning || game.closeUp !== 'clock' || !game.clock.solved || glasses.collected) return;
   glasses.collected = true;
   document.getElementById('clock-glasses').classList.add('puzzle-hidden');
+  addInventoryItem('glasses');
   renderInventory();
   showMessage('You take the antique glasses. The lenses shimmer with a precise, watchful light.');
 }
 
+function getEffectsAudioContext() {
+  if (!effectsAudioContext) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return null;
+    effectsAudioContext = new AudioContextClass();
+  }
+  if (effectsAudioContext.state === 'suspended') effectsAudioContext.resume().catch(() => {});
+  return effectsAudioContext;
+}
+
+function effectsVolume(multiplier = 1) {
+  return bgm.muted ? 0 : Math.min(1, bgm.volume * multiplier);
+}
+
+function playMechanicalSound(kind = 'tick') {
+  const volume = effectsVolume(kind === 'reject' || kind === 'unlock' ? .42 : .58);
+  if (volume <= 0) return;
+  const context = getEffectsAudioContext();
+  if (!context) return;
+  const now = context.currentTime;
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+
+  if (kind === 'reject' || kind === 'unlock') {
+    oscillator.type = 'sawtooth';
+    oscillator.frequency.setValueAtTime(kind === 'unlock' ? 92 : 155, now);
+    oscillator.frequency.exponentialRampToValueAtTime(kind === 'unlock' ? 38 : 62, now + (kind === 'unlock' ? .65 : .27));
+    gain.gain.setValueAtTime(volume, now);
+    gain.gain.exponentialRampToValueAtTime(.0001, now + (kind === 'unlock' ? .7 : .3));
+    oscillator.start(now);
+    oscillator.stop(now + (kind === 'unlock' ? .71 : .31));
+    return;
+  }
+
+  const isPlate = kind === 'plate';
+  oscillator.type = isPlate ? 'triangle' : 'square';
+  oscillator.frequency.setValueAtTime(isPlate ? 760 : 1480, now);
+  oscillator.frequency.exponentialRampToValueAtTime(isPlate ? 430 : 810, now + .075);
+  gain.gain.setValueAtTime(volume, now);
+  gain.gain.exponentialRampToValueAtTime(.0001, now + .1);
+  oscillator.start(now);
+  oscillator.stop(now + .11);
+}
+
+function strikeSoundHammer() {
+  const hammer = document.getElementById('sound-hammer');
+  hammer.classList.remove('hammer-strike');
+  void hammer.getBoundingClientRect();
+  hammer.classList.add('hammer-strike');
+  playMechanicalSound('tick');
+}
+
+function playSoundClue() {
+  if (game.transitioning || game.closeUp !== 'sound-device' || game.soundPuzzle.cluePlaying) return;
+  getEffectsAudioContext();
+  game.soundPuzzle.cluePlaying = true;
+  const detail = document.getElementById('room-sound-device-detail');
+  detail.classList.add('sound-device-playing');
+  soundClueTimers = soundClueTimes.map(delay => window.setTimeout(strikeSoundHammer, delay));
+  soundClueTimers.push(window.setTimeout(() => {
+    game.soundPuzzle.cluePlaying = false;
+    detail.classList.remove('sound-device-playing');
+    soundClueTimers = [];
+  }, 2600));
+}
+
+function updateTapIndicator(count) {
+  const marks = Array.from({ length: 5 }, (_, index) => index < count ? '●' : '○');
+  document.getElementById('rhythm-tap-count').textContent = marks.join(' ');
+}
+
+function animatePlate(className) {
+  const plate = document.getElementById('striking-plate');
+  plate.classList.remove(className);
+  void plate.getBoundingClientRect();
+  plate.classList.add(className);
+  window.setTimeout(() => plate.classList.remove(className), className === 'plate-reject' ? 430 : 180);
+}
+
+function intervalMatchesRhythm(type, interval) {
+  return type === 'short'
+    ? interval >= 250 && interval <= 750
+    : interval >= 800 && interval <= 1600;
+}
+
+function rejectRhythmAttempt() {
+  game.soundPuzzle.taps = [];
+  game.soundPuzzle.lastTap = 0;
+  updateTapIndicator(0);
+  animatePlate('plate-reject');
+  playMechanicalSound('reject');
+  showMessage('The plate answers with a deadened mechanical thud.');
+}
+
+function solveSoundPuzzle() {
+  if (game.soundPuzzle.solved) return;
+  game.soundPuzzle.solved = true;
+  game.puzzles.sound = true;
+  document.getElementById('room-trapdoor-detail').classList.add('trapdoor-solved');
+  document.getElementById('striking-plate').setAttribute('aria-label', 'The solved brass plate glows above the open trapdoor');
+  updateTapIndicator(5);
+  showMessage('The rhythm takes hold. Gears turn beneath the floor and the trapdoor opens.');
+}
+
+function strikeRhythmPlate() {
+  if (game.transitioning || game.closeUp !== 'trapdoor' || game.soundPuzzle.solved) return;
+  getEffectsAudioContext();
+  const now = performance.now();
+  const taps = game.soundPuzzle.taps;
+
+  if (taps.length > 0) {
+    const interval = now - game.soundPuzzle.lastTap;
+    if (interval < 250) return;
+    const expected = soundRhythm[taps.length - 1];
+    animatePlate('plate-strike');
+    playMechanicalSound('plate');
+    if (!intervalMatchesRhythm(expected, interval)) {
+      rejectRhythmAttempt();
+      return;
+    }
+  } else {
+    animatePlate('plate-strike');
+    playMechanicalSound('plate');
+  }
+
+  taps.push(now);
+  game.soundPuzzle.lastTap = now;
+  updateTapIndicator(taps.length);
+  if (taps.length === 5) solveSoundPuzzle();
+}
+
+function takeMusicBox() {
+  const musicBox = game.components.musicBox;
+  if (game.transitioning || game.closeUp !== 'trapdoor' || !game.soundPuzzle.solved || musicBox.collected) return;
+  musicBox.collected = true;
+  document.getElementById('hidden-music-box').classList.add('puzzle-hidden');
+  addInventoryItem('musicBox');
+  renderInventory();
+  showMessage('You recover the antique music box. A tiny brass cylinder waits inside its dark wooden case.');
+}
+
+function renderFrozenVessel() {
+  const detail = document.getElementById('room-frozen-detail');
+  detail.classList.toggle('valve-unlocked', game.frozen.valveUnlocked);
+  detail.classList.toggle('drainage-active', game.frozen.drainageStarted);
+  detail.classList.toggle('vessel-drained', game.frozen.drained);
+  document.getElementById('valve-lock').classList.toggle('puzzle-hidden', game.frozen.valveUnlocked);
+  document.getElementById('frozen-key').classList.toggle('puzzle-hidden', game.components.windingKey.collected);
+  document.getElementById('valve-wheel').style.transform = `rotate(${game.frozen.valveRotations * 90}deg)`;
+  document.getElementById('drain-valve').setAttribute('aria-label', game.frozen.valveUnlocked
+    ? `Unlocked drainage valve, ${game.frozen.valveRotations} of 4 rotations`
+    : 'Locked brass drainage valve');
+}
+
+function operateFrozenValve() {
+  if (game.transitioning || game.closeUp !== 'frozen') return;
+  if (!game.frozen.valveUnlocked) {
+    if (game.selectedItem !== 'key' || !game.keyCollected || game.keyUsed) {
+      showMessage('The valve is sealed. Something must unlock it.');
+      return;
+    }
+    game.frozen.valveUnlocked = true;
+    game.keyUsed = true;
+    removeInventoryItem('key');
+    document.getElementById('valve-lock').classList.add('puzzle-hidden');
+    renderInventory();
+    renderFrozenVessel();
+    playMechanicalSound('plate');
+    showMessage('The Brass Key turns once. The valve wheel is free, but still closed.');
+    return;
+  }
+  if (game.frozen.drainageStarted) {
+    showMessage(game.frozen.drained ? 'The vessel stands empty.' : 'Cold liquid is already draining through the pipe.');
+    return;
+  }
+  if (game.frozen.valveRotations >= 4) return;
+  game.frozen.valveRotations += 1;
+  renderFrozenVessel();
+  playMechanicalSound('plate');
+  showMessage(`${game.frozen.valveRotations} of 4 valve turns. The frozen seals strain.`);
+  if (game.frozen.valveRotations === 4) startFrozenDrainage();
+}
+
+function startFrozenDrainage() {
+  if (game.frozen.drainageStarted) return;
+  game.frozen.drainageStarted = true;
+  renderFrozenVessel();
+  showMessage('The drain opens. Pale blue liquid begins to leave the vessel.', 3600);
+  window.setTimeout(() => {
+    game.frozen.drained = true;
+    game.puzzles.touch = true;
+    renderFrozenVessel();
+    playMechanicalSound('plate');
+    showMessage('The last frozen drop falls away. The vessel releases its golden heart.');
+  }, 4200);
+}
+
+function takeWindingKey() {
+  const windingKey = game.components.windingKey;
+  if (game.transitioning || game.closeUp !== 'frozen' || windingKey.collected) return;
+  if (!game.frozen.drained) {
+    showMessage('The freezing liquid keeps it beyond reach.');
+    return;
+  }
+  windingKey.collected = true;
+  document.getElementById('frozen-key').classList.add('puzzle-hidden');
+  addInventoryItem('windingKey');
+  renderInventory();
+  showMessage('You claim the Golden Winding Key. Its tiny gear engraving is cold beneath your fingers.');
+}
+
+function triggerWorkshopTremor() {
+  const workshop = document.getElementById('room-workshop');
+  workshop.classList.remove('pendulum-impact');
+  void workshop.getBoundingClientRect();
+  workshop.classList.add('pendulum-impact');
+  window.setTimeout(() => workshop.classList.remove('pendulum-impact'), 620);
+}
+
+function playPendingPendulumStep() {
+  if (pendulumAnimationRunning || game.closeUp || game.currentView !== 1 || pendingPendulumSteps.length === 0) return;
+  const pendulumAngles = [0, -12, -25, -55];
+  const nextProgress = pendingPendulumSteps.shift();
+  const oldAngle = pendulumAngles[renderedPendulumProgress];
+  const newAngle = pendulumAngles[nextProgress];
+  const overshootAngle = newAngle - 2.5;
+  const pendulum = document.getElementById('workshop-pendulum');
+  const workshop = document.getElementById('room-workshop');
+  const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const duration = reducedMotion ? 1 : 1100;
+
+  pendulumAnimationRunning = true;
+  workshop.classList.add('pendulum-moving');
+  if (nextProgress === 3) {
+    workshop.classList.add('final-activation');
+    playMechanicalSound('unlock');
+    showMessage('All three components answer. The central mechanism begins its final movement.', 3600);
+  }
+  pendulum.style.transform = `rotate(${newAngle}deg)`;
+  pendulum.setAttribute('aria-label', `Massive pendulum, ${Math.abs(newAngle)} degrees left`);
+
+  if (pendulum.animate && !reducedMotion) {
+    pendulum.animate([
+      { transform: `rotate(${oldAngle}deg)`, offset: 0 },
+      { transform: `rotate(${oldAngle - 1.2}deg)`, offset: .14 },
+      { transform: `rotate(${overshootAngle}deg)`, offset: .78 },
+      { transform: `rotate(${newAngle}deg)`, offset: 1 },
+    ], { duration, easing: 'cubic-bezier(.34,.02,.2,1)', fill: 'none' });
+  }
+
+  window.setTimeout(triggerWorkshopTremor, reducedMotion ? 0 : 790);
+  window.setTimeout(() => {
+    renderedPendulumProgress = nextProgress;
+    pendulumAnimationRunning = false;
+    workshop.classList.remove('pendulum-moving');
+    if (nextProgress === 3) {
+      game.pendulumFinalComplete = true;
+      game.doorAccessible = true;
+      document.getElementById('workshop-door-hotspot').classList.remove('puzzle-hidden');
+      document.getElementById('workshop-door-hotspot').setAttribute('aria-hidden', 'false');
+      showMessage('The pendulum locks into place. The central iron door is finally exposed.');
+    }
+    if (pendingPendulumSteps.length) window.setTimeout(playPendingPendulumStep, reducedMotion ? 0 : 180);
+  }, duration);
+}
+
 function updateRepairProgress() {
+  const previousProgress = game.repairProgress;
   game.repairProgress = Object.values(game.components).filter(component => component.inserted).length;
+  const pendulumAngles = [0, -12, -25, -55];
+  const pendulum = document.getElementById('workshop-pendulum');
+  const pendulumAngle = pendulumAngles[game.repairProgress];
+  if (game.repairProgress === 0) {
+    pendulum.style.transform = 'rotate(0deg)';
+    pendulum.setAttribute('aria-label', 'Massive pendulum, vertical');
+  } else if (game.repairProgress > previousProgress) {
+    for (let step = previousProgress + 1; step <= game.repairProgress; step += 1) {
+      if (!pendingPendulumSteps.includes(step)) pendingPendulumSteps.push(step);
+    }
+    if (!game.closeUp && game.currentView === 1) window.setTimeout(playPendingPendulumStep, 80);
+  } else if (!pendulumAnimationRunning) {
+    pendulum.style.transform = `rotate(${pendulumAngle}deg)`;
+  }
+  const centralDoorHotspot = document.getElementById('workshop-door-hotspot');
+  centralDoorHotspot.classList.toggle('puzzle-hidden', !game.doorAccessible);
+  centralDoorHotspot.setAttribute('aria-hidden', String(!game.doorAccessible));
   const shaftDetail = document.getElementById('room-shaft-detail');
   shaftDetail.classList.toggle('shaft-active', game.repairProgress === 3);
   shaftDetail.setAttribute('aria-label', game.repairProgress === 3
-    ? 'The repaired central drive shaft is running'
-    : `Close-up of the central drive shaft, ${game.repairProgress} of 3 components fitted`);
+    ? 'The completed repair desk is powering the drive shaft'
+    : `Close-up of the repair desk, ${game.repairProgress} of 3 components fitted`);
   document.getElementById('shaft-status').textContent = game.repairProgress === 3
-    ? 'THE DRIVE SHAFT ANSWERS — THE FINAL LOCK RELEASES'
+    ? 'THE REPAIR DESK ANSWERS — THE FINAL LOCK RELEASES'
     : `${game.repairProgress} OF 3 COMPONENTS SEATED`;
 }
 
@@ -345,20 +713,61 @@ function insertComponent(componentName) {
     return;
   }
   component.inserted = true;
-  game.selectedItem = null;
+  removeInventoryItem(componentName);
   if (componentName === 'glasses') {
     document.getElementById('socket-glasses-item').classList.remove('puzzle-hidden');
+    document.getElementById('desk-glasses-item').classList.remove('puzzle-hidden');
     const socket = document.getElementById('socket-sight');
+    const deskSocket = document.getElementById('desk-socket-sight');
     socket.classList.add('filled');
+    deskSocket.classList.add('filled');
     socket.setAttribute('aria-label', 'Sight socket, filled with the antique glasses');
+  } else if (componentName === 'musicBox') {
+    document.getElementById('socket-musicbox-item').classList.remove('puzzle-hidden');
+    document.getElementById('desk-musicbox-item').classList.remove('puzzle-hidden');
+    const socket = document.getElementById('socket-sound');
+    const deskSocket = document.getElementById('desk-socket-sound');
+    socket.classList.add('filled');
+    deskSocket.classList.add('filled');
+    socket.setAttribute('aria-label', 'Sound socket, filled with the antique music box');
+  } else if (componentName === 'windingKey') {
+    document.getElementById('socket-windingkey-item').classList.remove('puzzle-hidden');
+    document.getElementById('desk-windingkey-item').classList.remove('puzzle-hidden');
+    const socket = document.getElementById('socket-touch');
+    const deskSocket = document.getElementById('desk-socket-touch');
+    socket.classList.add('filled');
+    deskSocket.classList.add('filled');
+    socket.setAttribute('aria-label', 'Touch socket, filled with the golden winding key');
   }
   updateRepairProgress();
   renderInventory();
-  showMessage('The glasses settle into the sight socket. One part of the mechanism remembers its purpose.');
+  const insertionMessages = {
+    glasses: 'The glasses settle into the sight socket. One part of the mechanism remembers its purpose.',
+    musicBox: 'The music box locks into the sound socket. A muted resonance passes through the desk.',
+    windingKey: 'The winding key seats in the touch socket. The desk shudders beneath your hand.',
+  };
+  showMessage(insertionMessages[componentName]);
 }
 
 function allComponentsInserted() {
   return Object.values(game.components).every(component => component.collected && component.inserted);
+}
+
+function lookAtRevealedDoor() {
+  if (!allComponentsInserted() || !game.doorAccessible || !game.pendulumFinalComplete || game.currentView !== 1) return;
+  beginEndingPlaceholder();
+}
+
+function beginEndingPlaceholder() {
+  if (game.transitioning) return;
+  game.transitioning = true;
+  game.doorUnlocked = true;
+  fade.classList.add('visible');
+  window.setTimeout(() => {
+    const ending = document.getElementById('ending-placeholder');
+    ending.classList.add('active');
+    ending.setAttribute('aria-hidden', 'false');
+  }, 720);
 }
 
 function unlockDoor() {
@@ -374,7 +783,6 @@ function unlockDoor() {
   }
   game.doorUnlocked = true;
   game.selectedItem = null;
-  document.getElementById('door-open-view').classList.remove('puzzle-hidden');
   document.getElementById('door-open-detail').classList.remove('puzzle-hidden');
   document.getElementById('door-lock-hotspot').classList.add('puzzle-hidden');
   renderInventory();
@@ -383,11 +791,20 @@ function unlockDoor() {
 
 function runAction(element) {
   switch (element.dataset.action) {
-    case 'zoom-door': openCloseUp('door', 2); break;
+    case 'zoom-central-door': lookAtRevealedDoor(); break;
     case 'zoom-drawer': openCloseUp('drawer', 0); break;
     case 'zoom-painting': openCloseUp('painting', 0); break;
     case 'zoom-clock': openCloseUp('clock', 0); break;
     case 'zoom-shaft': openCloseUp('shaft', 1); break;
+    case 'zoom-sound-device': openCloseUp('sound-device', 2); break;
+    case 'zoom-trapdoor': openCloseUp('trapdoor', 2); break;
+    case 'zoom-frozen': openCloseUp('frozen', 2); break;
+    case 'play-sound-clue': playSoundClue(); break;
+    case 'strike-rhythm': strikeRhythmPlate(); break;
+    case 'take-music-box': takeMusicBox(); break;
+    case 'operate-valve': operateFrozenValve(); break;
+    case 'take-winding-key': takeWindingKey(); break;
+    case 'take-note': takePaperNote(); break;
     case 'take-key': takeKey(); break;
     case 'take-glasses': takeGlasses(); break;
     case 'turn-hour': turnClockHand('hour'); break;
@@ -418,3 +835,4 @@ document.addEventListener('keydown', event => {
 renderClock();
 updateRepairProgress();
 renderInventory();
+renderFrozenVessel();

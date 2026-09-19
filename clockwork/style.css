@@ -1272,35 +1272,241 @@ button.inventory-slot:focus-visible {
 @keyframes final-gear-left { to { transform: rotate(360deg); } }
 @keyframes final-gear-right { to { transform: rotate(-360deg); } }
 @keyframes installed-glow { 50% { filter: drop-shadow(0 0 22px rgba(255,231,155,1)); } }
-.ending-placeholder {
+.ending-cinematic {
   position: fixed;
   inset: 0;
-  z-index: 1300;
+  z-index: 1600;
   display: none;
-  place-items: center;
   background: #000;
-  color: #b99552;
-  text-align: center;
   overflow: hidden;
+  pointer-events: all;
 }
-.ending-placeholder.active { display: grid; animation: ending-breathe 2s ease both; }
-.ending-placeholder video {
+.ending-cinematic.active {
+  display: block;
+  animation: cinematic-enter .8s ease both;
+}
+.ending-cinematic svg {
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
   background: #000;
 }
-.ending-placeholder p {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  margin: 0;
-  font: italic 1.15rem var(--font-body);
-  letter-spacing: .14em;
+@keyframes cinematic-enter { from { opacity: 0; } to { opacity: 1; } }
+
+/* A single 47-second master timeline: threshold → shop → visitor → heart → cycle. */
+.cinematic-camera {
+  transform-box: view-box;
+  transform-origin: 800px 450px;
 }
-.ending-placeholder p[hidden] { display: none; }
-@keyframes ending-breathe { from { opacity: 0; } to { opacity: 1; } }
+.ending-cinematic.active .cinematic-camera {
+  animation: cinematic-camera 47s cubic-bezier(.42,0,.2,1) both;
+}
+@keyframes cinematic-camera {
+  0% { transform: translate(0,0) scale(1); }
+  9% { transform: translate(0,-18px) scale(1.08); }
+  18% { transform: translate(0,-48px) scale(1.3); }
+  25% { transform: translate(-32px,-62px) scale(1.36); }
+  42% { transform: translate(-95px,-43px) scale(1.24); }
+  57% { transform: translate(-168px,-35px) scale(1.34); }
+  72% { transform: translate(-210px,-148px) scale(1.55); }
+  100% { transform: translate(-210px,-148px) scale(1.55); }
+}
+
+.ending-cinematic.active .cine-door-lock {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cine-lock 47s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes cine-lock {
+  0%,2% { transform: translate(800px,510px) rotate(0); filter: none; }
+  5% { transform: translate(800px,510px) rotate(135deg); filter: drop-shadow(0 0 18px rgba(255,218,111,.85)); }
+  8%,100% { transform: translate(800px,510px) rotate(180deg); opacity: 0; }
+}
+.cine-door-panel {
+  transform-box: fill-box;
+  will-change: transform, opacity;
+}
+.cine-door-left { transform-origin: left center; }
+.cine-door-right { transform-origin: right center; }
+.ending-cinematic.active .cine-door-left { animation: cine-door-left 47s cubic-bezier(.4,0,.14,1) both; }
+.ending-cinematic.active .cine-door-right { animation: cine-door-right 47s cubic-bezier(.4,0,.14,1) both; }
+@keyframes cine-door-left {
+  0%,4% { transform: translateX(0) scaleX(1); opacity: 1; }
+  11% { transform: translateX(-310px) scaleX(.22); opacity: 1; }
+  18%,100% { transform: translateX(-430px) scaleX(.1); opacity: 0; }
+}
+@keyframes cine-door-right {
+  0%,4% { transform: translateX(0) scaleX(1); opacity: 1; }
+  11% { transform: translateX(310px) scaleX(.22); opacity: 1; }
+  18%,100% { transform: translateX(430px) scaleX(.1); opacity: 0; }
+}
+.ending-cinematic.active .door-light-spill { animation: cine-door-light 47s ease both; }
+@keyframes cine-door-light {
+  0%,3% { opacity: 0; transform: scale(.22); }
+  9% { opacity: .95; transform: scale(1.18); }
+  18% { opacity: .42; transform: scale(1.55); }
+  26%,100% { opacity: 0; transform: scale(1.8); }
+}
+.ending-cinematic.active .cinematic-door { animation: threshold-pass 47s ease both; }
+@keyframes threshold-pass { 0%,15% { opacity: 1; } 23%,100% { opacity: 0; } }
+
+.cinematic-shop { opacity: .34; }
+.ending-cinematic.active .cinematic-shop { animation: shop-reveal 47s ease both; }
+@keyframes shop-reveal { 0%,5% { opacity: .25; } 17%,100% { opacity: 1; } }
+.shop-gear-a,
+.shop-gear-b { transform-box: fill-box; transform-origin: center; }
+.ending-cinematic.active .shop-gear-a { animation: shop-gears-a 8s linear infinite; }
+.ending-cinematic.active .shop-gear-b { animation: shop-gears-b 6s linear infinite reverse; }
+@keyframes shop-gears-a { to { transform: rotate(360deg); } }
+@keyframes shop-gears-b { to { transform: rotate(360deg); } }
+.shop-clock-hands { transform-box: fill-box; transform-origin: center; }
+.ending-cinematic.active .shop-clock-hands { animation: shop-clock-time 18s linear infinite; }
+@keyframes shop-clock-time { to { transform: rotate(360deg); } }
+.hanging-lamps { transform-box: fill-box; transform-origin: center top; }
+.ending-cinematic.active .hanging-lamps { animation: lamp-sway 6s ease-in-out infinite; }
+@keyframes lamp-sway { 0%,100% { transform: rotate(-.5deg); } 50% { transform: rotate(.5deg); } }
+.shop-counter { transform-box: fill-box; transform-origin: center bottom; }
+.ending-cinematic.active .shop-counter { animation: counter-arrive 47s ease both; }
+@keyframes counter-arrive { 0%,10% { transform: translateY(150px); } 23%,100% { transform: translateY(0); } }
+
+.entrance-door { transform-box: fill-box; transform-origin: right center; }
+.ending-cinematic.active .entrance-door { animation: entrance-open 47s cubic-bezier(.5,0,.2,1) both; }
+.ending-cinematic.active .outside-light { animation: outside-light 47s ease both; }
+@keyframes entrance-open { 0%,22% { transform: scaleX(1); } 27%,45% { transform: scaleX(.12); } 51%,100% { transform: scaleX(1); } }
+@keyframes outside-light { 0%,22% { opacity: 0; } 27%,43% { opacity: .46; } 51%,100% { opacity: 0; } }
+
+.cinematic-character {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+.ending-cinematic.active .cinematic-character { animation: character-enter 47s cubic-bezier(.36,0,.18,1) both; }
+@keyframes character-enter {
+  0%,23% { opacity: 0; transform: translateX(420px) translateY(0); }
+  25% { opacity: 1; transform: translateX(385px) translateY(-5px); }
+  28% { transform: translateX(315px) translateY(4px); }
+  31% { transform: translateX(245px) translateY(-5px); }
+  34% { transform: translateX(175px) translateY(4px); }
+  37% { transform: translateX(105px) translateY(-4px); }
+  40% { transform: translateX(42px) translateY(3px); }
+  43%,100% { opacity: 1; transform: translateX(0) translateY(0); }
+}
+.character-leg,
+.character-arm,
+.character-head,
+.character-bow,
+.character-point-arm { transform-box: fill-box; }
+.character-leg { transform-origin: center top; }
+.character-arm { transform-origin: center top; }
+.character-head { transform-origin: center 80%; }
+.character-bow { transform-origin: center; }
+.ending-cinematic.active .character-leg-front { animation: walk-leg-front 47s ease-in-out both; }
+.ending-cinematic.active .character-leg-back { animation: walk-leg-back 47s ease-in-out both; }
+.ending-cinematic.active .character-arm-left { animation: walk-arm-left 47s ease-in-out both; }
+.ending-cinematic.active .character-arm-right { animation: walk-arm-right 47s ease-in-out both; }
+@keyframes walk-leg-front {
+  0%,23%,43%,100% { transform: translate(-38px,126px) rotate(0); }
+  25%,31%,37% { transform: translate(-38px,126px) rotate(20deg); }
+  28%,34%,40% { transform: translate(-38px,126px) rotate(-20deg); }
+}
+@keyframes walk-leg-back {
+  0%,23%,43%,100% { transform: translate(30px,126px) rotate(0); }
+  25%,31%,37% { transform: translate(30px,126px) rotate(-20deg); }
+  28%,34%,40% { transform: translate(30px,126px) rotate(20deg); }
+}
+@keyframes walk-arm-left {
+  0%,23%,43%,100% { transform: translate(-71px,5px) rotate(0); }
+  25%,31%,37% { transform: translate(-71px,5px) rotate(-13deg); }
+  28%,34%,40% { transform: translate(-71px,5px) rotate(13deg); }
+}
+@keyframes walk-arm-right {
+  0%,23% { transform: translate(70px,5px) rotate(0); opacity: 1; }
+  25%,31%,37% { transform: translate(70px,5px) rotate(13deg); }
+  28%,34%,40% { transform: translate(70px,5px) rotate(-13deg); }
+  43% { transform: translate(70px,5px) rotate(0); opacity: 1; }
+  46%,100% { transform: translate(70px,5px) rotate(0); opacity: 0; }
+}
+.ending-cinematic.active .character-head { animation: character-look 47s ease both; }
+@keyframes character-look {
+  0%,39% { transform: translate(0,-112px) rotate(-4deg); }
+  43% { transform: translate(0,-112px) rotate(0); }
+  48% { transform: translate(0,-110px) rotate(7deg); }
+  56%,100% { transform: translate(0,-110px) rotate(4deg); }
+}
+.ending-cinematic.active .character-brows { animation: character-confused 47s ease both; }
+@keyframes character-confused { 0%,44% { transform: translateY(0); } 48%,100% { transform: translateY(-7px) rotate(-3deg); } }
+.character-point-arm { opacity: 0; transform-origin: 12% 12%; }
+.ending-cinematic.active .character-point-arm { animation: character-point 47s cubic-bezier(.3,0,.15,1) both; }
+@keyframes character-point {
+  0%,44% { opacity: 0; transform: translate(70px,5px) rotate(38deg) scale(.9); }
+  47% { opacity: 1; }
+  55%,100% { opacity: 1; transform: translate(70px,5px) rotate(-8deg) scale(1); }
+}
+.ending-cinematic.active .character-bow { animation: bow-motion 47s ease-in-out both; }
+@keyframes bow-motion {
+  0%,23%,43%,100% { transform: translate(0,-3px) rotate(0); }
+  26%,32%,38% { transform: translate(0,-3px) rotate(-5deg); }
+  29%,35%,41% { transform: translate(0,-3px) rotate(5deg); }
+}
+.character-eye { transform-box: fill-box; transform-origin: center; }
+.ending-cinematic.active .character-eye { animation: character-blink 47s linear both; }
+@keyframes character-blink {
+  0%,31%,32%,46%,47%,58%,59%,100% { transform: scaleY(1); }
+  31.5%,46.5%,58.5% { transform: scaleY(.08); }
+}
+
+.cinematic-pov {
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 800px 900px;
+}
+.ending-cinematic.active .cinematic-pov { animation: pov-rise 47s cubic-bezier(.36,0,.18,1) both; }
+@keyframes pov-rise {
+  0%,56% { opacity: 0; transform: translateY(440px) scale(.78); }
+  62% { opacity: 1; transform: translateY(170px) scale(.9); }
+  70% { opacity: 1; transform: translateY(20px) scale(1); }
+  82%,100% { opacity: 1; transform: translateY(-75px) scale(1.22); }
+}
+.pov-lapel,
+.pov-hand { transform-box: fill-box; }
+.pov-lapel-left { transform-origin: right center; }
+.pov-lapel-right { transform-origin: left center; }
+.pov-hand-left { transform-origin: center; }
+.pov-hand-right { transform-origin: center; }
+.ending-cinematic.active .pov-lapel-left { animation: lapel-left 47s cubic-bezier(.35,0,.2,1) both; }
+.ending-cinematic.active .pov-lapel-right { animation: lapel-right 47s cubic-bezier(.35,0,.2,1) both; }
+.ending-cinematic.active .pov-hand-left { animation: hand-left-open 47s cubic-bezier(.35,0,.2,1) both; }
+.ending-cinematic.active .pov-hand-right { animation: hand-right-open 47s cubic-bezier(.35,0,.2,1) both; }
+@keyframes lapel-left { 0%,62% { transform: rotate(0); } 72%,100% { transform: translateX(-106px) rotate(-22deg); } }
+@keyframes lapel-right { 0%,62% { transform: rotate(0); } 72%,100% { transform: translateX(106px) rotate(22deg); } }
+@keyframes hand-left-open { 0%,61% { transform: translate(70px,90px); } 66% { transform: translate(12px,5px); } 73%,100% { transform: translate(-128px,25px) rotate(-13deg); } }
+@keyframes hand-right-open { 0%,61% { transform: translate(-70px,90px); } 66% { transform: translate(-12px,5px); } 73%,100% { transform: translate(128px,25px) rotate(13deg); } }
+
+.mechanical-heart { opacity: 0; }
+.ending-cinematic.active .mechanical-heart { animation: heart-reveal 47s ease both; }
+.ending-cinematic.active .heart-aura { animation: heart-aura 47s ease both; }
+@keyframes heart-reveal { 0%,65% { opacity: 0; } 72%,88% { opacity: 1; } 90%,100% { opacity: 0; } }
+@keyframes heart-aura { 0%,67% { opacity: 0; transform: scale(.35); } 76% { opacity: .72; transform: scale(1); } 85% { opacity: 1; transform: scale(1.35); } 89%,100% { opacity: 0; transform: scale(1.55); } }
+.heart-gear-main,
+.heart-gear-small { transform-box: fill-box; transform-origin: center; }
+.ending-cinematic.active .heart-gear-main { animation: heart-main-spin 47s linear both; }
+.ending-cinematic.active .heart-small-a { animation: heart-small-spin-a 47s linear both; }
+.ending-cinematic.active .heart-small-b { animation: heart-small-spin-b 47s linear both; }
+@keyframes heart-main-spin { 0%,68% { transform: rotate(0); } 76% { transform: rotate(360deg); } 82% { transform: rotate(1080deg); } 87% { transform: rotate(2520deg); } 88%,100% { transform: rotate(2880deg); } }
+@keyframes heart-small-spin-a { 0%,68% { transform: rotate(0); } 78% { transform: rotate(-720deg); } 87% { transform: rotate(-2520deg); } 88%,100% { transform: rotate(-2880deg); } }
+@keyframes heart-small-spin-b { 0%,68% { transform: rotate(0); } 78% { transform: rotate(720deg); } 87% { transform: rotate(2160deg); } 88%,100% { transform: rotate(2520deg); } }
+
+.cinematic-blackout { opacity: 0; }
+.ending-cinematic.active .cinematic-blackout { animation: cinematic-blackout 47s ease both; }
+@keyframes cinematic-blackout { 0%,85% { opacity: 0; } 89%,100% { opacity: 1; } }
+.cinematic-final-line {
+  fill: #e1c88e;
+  font: italic 34px var(--font-body);
+  letter-spacing: .11em;
+  opacity: 0;
+}
+.ending-cinematic.active .cinematic-final-line { animation: final-cycle-line 47s ease both; }
+@keyframes final-cycle-line { 0%,89% { opacity: 0; } 91% { opacity: 1; } 96% { opacity: 1; } 99%,100% { opacity: 0; } }
 .shaft-active #shaft-core {
   animation: shaft-awake 1.4s ease-in-out infinite;
 }

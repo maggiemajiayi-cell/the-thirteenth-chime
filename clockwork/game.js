@@ -17,40 +17,45 @@ const detailNames = {
   note: 'Inventory · Worn Paper',
 };
 
-const game = {
-  currentView: 1,
-  closeUp: null,
-  transitioning: false,
-  drawerDigits: [0, 0, 0, 0],
-  drawerOpen: false,
-  paperCollected: false,
-  paperUsed: false,
-  inventoryOrder: [],
-  clock: { hour: 12, minute: 30, solved: false },
-  soundPuzzle: { cluePlaying: false, taps: [], lastTap: 0, solved: false },
-  frozen: { valveUnlocked: false, valveRotations: 0, drainageStarted: false, drained: false },
-  puzzles: { visual: false, sound: false, touch: false },
-  components: {
-    glasses: { collected: false, inserted: false },
-    musicBox: { collected: false, inserted: false },
-    windingKey: { collected: false, inserted: false },
-  },
-  keyCollected: false,
-  keyUsed: false,
-  selectedItem: null,
-  repairProgress: 0,
-  pendulumFinalComplete: false,
-  doorAccessible: false,
-  doorUnlocked: false,
-};
+function createInitialGameState() {
+  return {
+    currentView: 1,
+    closeUp: null,
+    transitioning: false,
+    drawerDigits: [0, 0, 0, 0],
+    drawerOpen: false,
+    paperCollected: false,
+    paperUsed: false,
+    inventoryOrder: [],
+    clock: { hour: 12, minute: 30, solved: false },
+    soundPuzzle: { cluePlaying: false, taps: [], lastTap: 0, solved: false },
+    frozen: { valveUnlocked: false, valveRotations: 0, drainageStarted: false, drained: false },
+    puzzles: { visual: false, sound: false, touch: false },
+    components: {
+      glasses: { collected: false, inserted: false },
+      musicBox: { collected: false, inserted: false },
+      windingKey: { collected: false, inserted: false },
+    },
+    keyCollected: false,
+    keyUsed: false,
+    selectedItem: null,
+    repairProgress: 0,
+    pendulumFinalComplete: false,
+    doorAccessible: false,
+    doorUnlocked: false,
+    endingTriggered: false,
+    cinematicPlaying: false,
+  };
+}
+
+const game = createInitialGameState();
 
 const drawerSolution = '1158';
 
 const fade = document.getElementById('scene-fade');
 const bgm = document.getElementById('bgm');
 const introVideo = document.getElementById('intro-video');
-const endingVideo = document.getElementById('ending-video');
-const endingFallback = document.getElementById('ending-fallback');
+const endingCinematic = document.getElementById('ending-cinematic');
 const introOverlay = document.getElementById('intro-video-overlay');
 const volumeControl = document.getElementById('volume-control');
 const volumeToggle = document.getElementById('volume-toggle');
@@ -63,11 +68,57 @@ let introWatchdog = null;
 let messageTimer = null;
 let renderedPendulumProgress = 0;
 let pendulumAnimationRunning = false;
+let pendulumWebAnimation = null;
 const pendingPendulumSteps = [];
 const soundRhythm = ['short', 'short', 'long', 'short'];
 const soundClueTimes = [0, 450, 900, 1950, 2400];
 let effectsAudioContext = null;
 let soundClueTimers = [];
+let sessionGeneration = 0;
+const gameTimers = new Set();
+const cinematicTimers = new Set();
+const cinematicAudioNodes = new Set();
+let cinematicFrame = null;
+
+function scheduleGame(callback, delay = 0) {
+  const generation = sessionGeneration;
+  const timer = window.setTimeout(() => {
+    gameTimers.delete(timer);
+    if (generation === sessionGeneration) callback();
+  }, delay);
+  gameTimers.add(timer);
+  return timer;
+}
+
+function scheduleCinematic(callback, delay = 0) {
+  const generation = sessionGeneration;
+  const timer = window.setTimeout(() => {
+    cinematicTimers.delete(timer);
+    if (generation === sessionGeneration && game.cinematicPlaying) callback();
+  }, delay);
+  cinematicTimers.add(timer);
+  return timer;
+}
+
+function cancelPendingAsync() {
+  sessionGeneration += 1;
+  gameTimers.forEach(timer => window.clearTimeout(timer));
+  cinematicTimers.forEach(timer => window.clearTimeout(timer));
+  gameTimers.clear();
+  cinematicTimers.clear();
+  soundClueTimers = [];
+  window.clearTimeout(messageTimer);
+  window.clearTimeout(introWatchdog);
+  if (cinematicFrame !== null) cancelAnimationFrame(cinematicFrame);
+  cinematicFrame = null;
+  cinematicAudioNodes.forEach(node => {
+    try { node.stop(); } catch (_) {}
+    try { node.disconnect(); } catch (_) {}
+  });
+  cinematicAudioNodes.clear();
+  if (pendulumWebAnimation) pendulumWebAnimation.cancel();
+  pendulumWebAnimation = null;
+}
 
 function ensureBgm() {
   if (bgm.paused && !bgm.muted) bgm.play().catch(() => {});
@@ -77,8 +128,6 @@ function setVolume(level, resumePlayback = true) {
   const safeLevel = [0, 25, 50, 75, 100].includes(level) ? level : 25;
   bgm.volume = safeLevel / 100;
   bgm.muted = safeLevel === 0;
-  endingVideo.volume = safeLevel / 100;
-  endingVideo.muted = safeLevel === 0;
   volumeIcon.dataset.level = String(safeLevel);
   volumeToggle.setAttribute('aria-label', `Adjust volume, currently ${safeLevel} percent`);
   volumeMarks.forEach(mark => {
@@ -124,7 +173,7 @@ function showMessage(message, duration = 2800) {
   window.clearTimeout(messageTimer);
   gameMessage.textContent = message;
   gameMessage.classList.add('visible');
-  messageTimer = window.setTimeout(() => gameMessage.classList.remove('visible'), duration);
+  messageTimer = scheduleGame(() => gameMessage.classList.remove('visible'), duration);
 }
 
 function showScreen(id) {
@@ -137,7 +186,7 @@ function displayView(index) {
   game.currentView = index;
   game.closeUp = null;
   renderView();
-  if (index === 1) window.setTimeout(playPendingPendulumStep, 80);
+  if (index === 1) scheduleGame(playPendingPendulumStep, 80);
 }
 
 function renderView() {
@@ -169,14 +218,14 @@ function startGame() {
   closeVolumePanel();
   fade.classList.add('visible');
   ensureBgm();
-  window.setTimeout(() => {
+  scheduleGame(() => {
     introActive = true;
     introOverlay.classList.remove('is-hidden');
     introOverlay.setAttribute('aria-hidden', 'false');
     introVideo.currentTime = 0;
     introVideo.play().catch(() => finishIntro());
-    introWatchdog = window.setTimeout(finishIntro, 20000);
-    window.setTimeout(() => fade.classList.remove('visible'), 60);
+    introWatchdog = scheduleGame(finishIntro, 20000);
+    scheduleGame(() => fade.classList.remove('visible'), 60);
   }, 240);
 }
 
@@ -186,25 +235,18 @@ function finishIntro() {
   window.clearTimeout(introWatchdog);
   introVideo.pause();
   fade.classList.add('visible');
-  window.setTimeout(() => {
+  scheduleGame(() => {
     introOverlay.classList.add('is-hidden');
     introOverlay.setAttribute('aria-hidden', 'true');
     displayView(1);
     showScreen('game-screen');
-    window.setTimeout(() => fade.classList.remove('visible'), 60);
-    window.setTimeout(() => { game.transitioning = false; }, 420);
+    scheduleGame(() => fade.classList.remove('visible'), 60);
+    scheduleGame(() => { game.transitioning = false; }, 420);
   }, 240);
 }
 
 introVideo.addEventListener('ended', finishIntro);
 introVideo.addEventListener('error', finishIntro);
-
-function showEndingFallback() {
-  endingVideo.hidden = true;
-  endingFallback.hidden = false;
-}
-
-endingVideo.addEventListener('error', showEndingFallback);
 
 function turnView(direction) {
   if (game.transitioning || game.closeUp || !document.getElementById('game-screen').classList.contains('active')) return;
@@ -217,7 +259,7 @@ function goBack() {
   game.closeUp = null;
   renderView();
   if (previousCloseUp === 'shaft' && game.currentView === 1) {
-    window.setTimeout(playPendingPendulumStep, 80);
+    scheduleGame(playPendingPendulumStep, 80);
   }
 }
 
@@ -401,7 +443,7 @@ function solveClock() {
   game.clock.solved = true;
   game.puzzles.visual = true;
   document.getElementById('adjustable-clock').classList.add('clock-unlocked');
-  window.setTimeout(() => {
+  scheduleGame(() => {
     document.getElementById('clock-compartment').classList.remove('puzzle-hidden');
     document.getElementById('clock-compartment-label').classList.remove('puzzle-hidden');
     if (!game.components.glasses.collected) document.getElementById('clock-glasses').classList.remove('puzzle-hidden');
@@ -503,8 +545,8 @@ function playSoundClue() {
   game.soundPuzzle.cluePlaying = true;
   const detail = document.getElementById('room-sound-device-detail');
   detail.classList.add('sound-device-playing');
-  soundClueTimers = soundClueTimes.map(delay => window.setTimeout(strikeSoundHammer, delay));
-  soundClueTimers.push(window.setTimeout(() => {
+  soundClueTimers = soundClueTimes.map(delay => scheduleGame(strikeSoundHammer, delay));
+  soundClueTimers.push(scheduleGame(() => {
     game.soundPuzzle.cluePlaying = false;
     detail.classList.remove('sound-device-playing');
     soundClueTimers = [];
@@ -521,7 +563,7 @@ function animatePlate(className) {
   plate.classList.remove(className);
   void plate.getBoundingClientRect();
   plate.classList.add(className);
-  window.setTimeout(() => plate.classList.remove(className), className === 'plate-reject' ? 430 : 180);
+  scheduleGame(() => plate.classList.remove(className), className === 'plate-reject' ? 430 : 180);
 }
 
 function intervalMatchesRhythm(type, interval) {
@@ -633,7 +675,7 @@ function startFrozenDrainage() {
   game.frozen.drainageStarted = true;
   renderFrozenVessel();
   showMessage('The drain opens. Pale blue liquid begins to leave the vessel.', 3600);
-  window.setTimeout(() => {
+  scheduleGame(() => {
     game.frozen.drained = true;
     game.puzzles.touch = true;
     renderFrozenVessel();
@@ -661,7 +703,7 @@ function triggerWorkshopTremor() {
   workshop.classList.remove('pendulum-impact');
   void workshop.getBoundingClientRect();
   workshop.classList.add('pendulum-impact');
-  window.setTimeout(() => workshop.classList.remove('pendulum-impact'), 620);
+  scheduleGame(() => workshop.classList.remove('pendulum-impact'), 620);
 }
 
 function playPendingPendulumStep() {
@@ -687,7 +729,8 @@ function playPendingPendulumStep() {
   pendulum.setAttribute('aria-label', `Massive pendulum, ${Math.abs(newAngle)} degrees left`);
 
   if (pendulum.animate && !reducedMotion) {
-    pendulum.animate([
+    if (pendulumWebAnimation) pendulumWebAnimation.cancel();
+    pendulumWebAnimation = pendulum.animate([
       { transform: `rotate(${oldAngle}deg)`, offset: 0 },
       { transform: `rotate(${oldAngle - 1.2}deg)`, offset: .14 },
       { transform: `rotate(${overshootAngle}deg)`, offset: .78 },
@@ -695,10 +738,11 @@ function playPendingPendulumStep() {
     ], { duration, easing: 'cubic-bezier(.34,.02,.2,1)', fill: 'none' });
   }
 
-  window.setTimeout(triggerWorkshopTremor, reducedMotion ? 0 : 790);
-  window.setTimeout(() => {
+  scheduleGame(triggerWorkshopTremor, reducedMotion ? 0 : 790);
+  scheduleGame(() => {
     renderedPendulumProgress = nextProgress;
     pendulumAnimationRunning = false;
+    pendulumWebAnimation = null;
     workshop.classList.remove('pendulum-moving');
     if (nextProgress === 3) {
       game.pendulumFinalComplete = true;
@@ -707,7 +751,7 @@ function playPendingPendulumStep() {
       document.getElementById('workshop-door-hotspot').setAttribute('aria-hidden', 'false');
       showMessage('The pendulum locks into place. The central iron door is finally exposed.');
     }
-    if (pendingPendulumSteps.length) window.setTimeout(playPendingPendulumStep, reducedMotion ? 0 : 180);
+    if (pendingPendulumSteps.length) scheduleGame(playPendingPendulumStep, reducedMotion ? 0 : 180);
   }, duration);
 }
 
@@ -724,7 +768,7 @@ function updateRepairProgress() {
     for (let step = previousProgress + 1; step <= game.repairProgress; step += 1) {
       if (!pendingPendulumSteps.includes(step)) pendingPendulumSteps.push(step);
     }
-    if (!game.closeUp && game.currentView === 1) window.setTimeout(playPendingPendulumStep, 80);
+    if (!game.closeUp && game.currentView === 1) scheduleGame(playPendingPendulumStep, 80);
   } else if (!pendulumAnimationRunning) {
     pendulum.style.transform = `rotate(${pendulumAngle}deg)`;
   }
@@ -794,24 +838,190 @@ function allComponentsInserted() {
 
 function lookAtRevealedDoor() {
   if (!allComponentsInserted() || !game.doorAccessible || !game.pendulumFinalComplete || game.currentView !== 1) return;
-  beginEndingPlaceholder();
+  startEndingCinematic();
 }
 
-function beginEndingPlaceholder() {
-  if (game.transitioning) return;
+function selectedVolumeRatio() {
+  return Number(volumeIcon.dataset.level || 25) / 100;
+}
+
+function playCinematicTone(kind) {
+  if (bgm.muted || !game.cinematicPlaying) return;
+  const context = getEffectsAudioContext();
+  if (!context) return;
+  const now = context.currentTime;
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  const settings = {
+    door: { type: 'sawtooth', from: 76, to: 31, duration: 1.25, volume: .18 },
+    step: { type: 'triangle', from: 112, to: 58, duration: .14, volume: .17 },
+    tick: { type: 'square', from: 1280, to: 760, duration: .055, volume: .095 },
+    heart: { type: 'sine', from: 86, to: 42, duration: .32, volume: .22 },
+    stop: { type: 'sawtooth', from: 94, to: 28, duration: .75, volume: .25 },
+  }[kind];
+  if (!settings) return;
+  oscillator.type = settings.type;
+  oscillator.frequency.setValueAtTime(settings.from, now);
+  oscillator.frequency.exponentialRampToValueAtTime(settings.to, now + settings.duration);
+  gain.gain.setValueAtTime(selectedVolumeRatio() * settings.volume, now);
+  gain.gain.exponentialRampToValueAtTime(.0001, now + settings.duration);
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+  cinematicAudioNodes.add(oscillator);
+  oscillator.onended = () => {
+    cinematicAudioNodes.delete(oscillator);
+    oscillator.disconnect();
+    gain.disconnect();
+  };
+  oscillator.start(now);
+  oscillator.stop(now + settings.duration + .02);
+}
+
+function fadeBgmForCinematic(duration = 6500) {
+  const initialLevel = bgm.volume;
+  const generation = sessionGeneration;
+  const startedAt = performance.now();
+  const step = now => {
+    if (generation !== sessionGeneration || !game.cinematicPlaying) return;
+    const progress = Math.min(1, (now - startedAt) / duration);
+    bgm.volume = initialLevel * (1 - progress);
+    if (progress < 1) {
+      cinematicFrame = requestAnimationFrame(step);
+    } else {
+      cinematicFrame = null;
+      bgm.pause();
+    }
+  };
+  cinematicFrame = requestAnimationFrame(step);
+}
+
+function scheduleCinematicAudio() {
+  scheduleCinematic(() => playCinematicTone('door'), 500);
+  scheduleCinematic(() => playCinematicTone('door'), 3100);
+  [11600, 12400, 13200, 14000, 14800, 15600, 16400, 17200, 18000].forEach(delay => {
+    scheduleCinematic(() => playCinematicTone('step'), delay);
+  });
+  [29200, 31100, 32900, 34600].forEach(delay => {
+    scheduleCinematic(() => playCinematicTone('heart'), delay);
+  });
+  let tickTime = 28600;
+  let interval = 690;
+  while (tickTime < 40800) {
+    scheduleCinematic(() => playCinematicTone('tick'), Math.round(tickTime));
+    tickTime += interval;
+    interval = Math.max(115, interval * .89);
+  }
+  scheduleCinematic(() => playCinematicTone('stop'), 40900);
+}
+
+function startEndingCinematic() {
+  if (game.transitioning || game.endingTriggered || game.cinematicPlaying) return;
   game.transitioning = true;
   game.doorUnlocked = true;
-  fade.classList.add('visible');
-  const ending = document.getElementById('ending-placeholder');
-  ending.classList.add('active');
-  ending.setAttribute('aria-hidden', 'false');
-  endingVideo.hidden = false;
-  endingFallback.hidden = true;
-  endingVideo.currentTime = 0;
-  endingVideo.volume = bgm.volume;
-  endingVideo.muted = bgm.muted;
+  game.endingTriggered = true;
+  game.cinematicPlaying = true;
+  gameMessage.classList.remove('visible');
+  closeVolumePanel();
+  document.getElementById('game-screen').inert = true;
+  endingCinematic.classList.remove('active');
+  void endingCinematic.offsetWidth;
+  endingCinematic.classList.add('active');
+  endingCinematic.setAttribute('aria-hidden', 'false');
+  fade.classList.remove('visible');
+  fadeBgmForCinematic();
+  scheduleCinematicAudio();
+  scheduleCinematic(() => resetGame(), 47000);
+}
+
+function resetGame() {
+  cancelPendingAsync();
+  const freshState = createInitialGameState();
+  Object.keys(game).forEach(key => delete game[key]);
+  Object.assign(game, freshState);
+  game.transitioning = true;
+
+  introActive = false;
+  introVideo.pause();
+  try { introVideo.currentTime = 0; } catch (_) {}
+  introOverlay.classList.add('is-hidden');
+  introOverlay.setAttribute('aria-hidden', 'true');
+
+  endingCinematic.classList.remove('active');
+  endingCinematic.setAttribute('aria-hidden', 'true');
+  document.getElementById('game-screen').inert = false;
+
+  document.querySelectorAll('.puzzle-wheel').forEach((wheel, index) => {
+    wheel.querySelector('text').textContent = '0';
+    wheel.setAttribute('aria-label', `Digit ${index + 1}: 0. Click to advance`);
+  });
+  document.getElementById('drawer-closed-plate').classList.remove('puzzle-hidden');
+  document.getElementById('drawer-open-tray').classList.add('puzzle-hidden');
+  document.getElementById('drawer-key').classList.remove('puzzle-hidden');
+  document.getElementById('floor-note').classList.remove('puzzle-hidden');
+
+  document.getElementById('adjustable-clock').classList.remove('clock-unlocked', 'mechanical-tick');
+  document.getElementById('clock-compartment').classList.add('puzzle-hidden');
+  document.getElementById('clock-compartment-label').classList.add('puzzle-hidden');
+  document.getElementById('clock-glasses').classList.add('puzzle-hidden');
+
+  document.getElementById('room-sound-device-detail').classList.remove('sound-device-playing');
+  document.getElementById('sound-hammer').classList.remove('hammer-strike');
+  document.getElementById('room-trapdoor-detail').classList.remove('trapdoor-solved');
+  document.getElementById('hidden-music-box').classList.remove('puzzle-hidden');
+  document.getElementById('striking-plate').classList.remove('plate-strike', 'plate-reject');
+  document.getElementById('striking-plate').setAttribute('aria-label', 'Strike the circular brass plate to reproduce the rhythm');
+  updateTapIndicator(0);
+
+  ['glasses', 'musicbox', 'windingkey'].forEach(name => {
+    document.getElementById(`socket-${name}-item`).classList.add('puzzle-hidden');
+    document.getElementById(`desk-${name}-item`).classList.add('puzzle-hidden');
+  });
+  const socketLabels = {
+    sight: 'Sight socket, empty',
+    sound: 'Sound socket, empty',
+    touch: 'Touch socket, empty',
+  };
+  Object.entries(socketLabels).forEach(([name, label]) => {
+    document.getElementById(`socket-${name}`).classList.remove('filled');
+    document.getElementById(`socket-${name}`).setAttribute('aria-label', label);
+    document.getElementById(`desk-socket-${name}`).classList.remove('filled');
+  });
+
+  const workshop = document.getElementById('room-workshop');
+  workshop.classList.remove('pendulum-impact', 'pendulum-moving', 'final-activation');
+  const pendulum = document.getElementById('workshop-pendulum');
+  pendulum.style.transform = 'rotate(0deg)';
+  pendulum.setAttribute('aria-label', 'Massive pendulum, vertical');
+  renderedPendulumProgress = 0;
+  pendulumAnimationRunning = false;
+  pendingPendulumSteps.length = 0;
+  document.getElementById('workshop-door-hotspot').classList.add('puzzle-hidden');
+  document.getElementById('workshop-door-hotspot').setAttribute('aria-hidden', 'true');
+
+  document.getElementById('door-open-detail').classList.add('puzzle-hidden');
+  document.getElementById('door-lock-hotspot').classList.remove('puzzle-hidden');
+  document.getElementById('door-lock-visual').classList.remove('lock-rattle');
+
+  gameMessage.textContent = '';
+  gameMessage.classList.remove('visible');
+  closeVolumePanel();
+  renderClock();
+  renderFrozenVessel();
+  updateRepairProgress();
+  renderInventory();
+  renderView();
+
   bgm.pause();
-  endingVideo.play().catch(showEndingFallback);
+  try { bgm.currentTime = 0; } catch (_) {}
+  bgm.volume = selectedVolumeRatio();
+  bgm.muted = selectedVolumeRatio() === 0;
+
+  fade.classList.add('visible');
+  showScreen('landing-screen');
+  scheduleGame(() => {
+    fade.classList.remove('visible');
+    game.transitioning = false;
+  }, 650);
 }
 
 function unlockDoor() {

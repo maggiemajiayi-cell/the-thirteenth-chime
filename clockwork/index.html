@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Thirteenth Chime — Room Escape</title>
   <meta name="description" content="Explore a Victorian clockwork workshop through fixed first-person views. Click to inspect and find a way out." />
-  <link rel="stylesheet" href="style.css?v=30" />
+  <link rel="stylesheet" href="style.css?v=32" />
 </head>
 <body>
 
@@ -918,11 +918,192 @@
 
   </div><!-- /#game-screen -->
 
-  <div id="ending-placeholder" class="ending-placeholder" aria-hidden="true">
-    <video id="ending-video" src="the_thirteenth_chime_ending_animatic.mp4" preload="metadata" playsinline aria-label="The Thirteenth Chime ending animatic"></video>
-    <p id="ending-fallback" hidden>The mechanism exhales into darkness.</p>
+  <!-- One continuous, layered in-game ending. Every moving part remains independent. -->
+  <div id="ending-cinematic" class="ending-cinematic" aria-hidden="true">
+    <svg id="cinematic-stage" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="A continuous animated ending inside a Victorian clock shop">
+      <defs>
+        <linearGradient id="cineWall" x2="0" y2="1"><stop stop-color="#050606"/><stop offset=".62" stop-color="#12100b"/><stop offset="1" stop-color="#050403"/></linearGradient>
+        <linearGradient id="cineWood" x2="1" y2="1"><stop stop-color="#211208"/><stop offset=".48" stop-color="#080504"/><stop offset="1" stop-color="#3a210d"/></linearGradient>
+        <linearGradient id="cineIron" x2="1"><stop stop-color="#090a0a"/><stop offset=".5" stop-color="#34332e"/><stop offset="1" stop-color="#080909"/></linearGradient>
+        <linearGradient id="cineHair" x2="1" y2="1"><stop stop-color="#fafafa"/><stop offset=".46" stop-color="#d6d7d5"/><stop offset="1" stop-color="#949795"/></linearGradient>
+        <linearGradient id="cineDress" x2="0" y2="1"><stop stop-color="#fbfaf2"/><stop offset="1" stop-color="#bfc2bf"/></linearGradient>
+        <radialGradient id="cineGold"><stop stop-color="#fff6b4"/><stop offset=".22" stop-color="#f2bf4c"/><stop offset=".65" stop-color="#9a5a12"/><stop offset="1" stop-color="#2d1704"/></radialGradient>
+        <radialGradient id="cineLight"><stop stop-color="#fff3a2" stop-opacity=".95"/><stop offset=".36" stop-color="#e5a32d" stop-opacity=".5"/><stop offset="1" stop-color="#a35a11" stop-opacity="0"/></radialGradient>
+        <filter id="cineGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="18" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="cineSoftGlow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="cineInk"><feDropShadow dx="0" dy="3" stdDeviation="1.4" flood-color="#000" flood-opacity=".95"/></filter>
+        <clipPath id="heartWindow"><path d="M716 562 Q800 512 884 562 V735 Q800 786 716 735Z"/></clipPath>
+      </defs>
+
+      <rect width="1600" height="900" fill="#000"/>
+
+      <g id="cinematic-camera" class="cinematic-camera">
+        <!-- The clock shop exists behind the workshop door from the first frame. -->
+        <g id="cinematic-shop" class="cinematic-shop">
+          <rect width="1600" height="900" fill="url(#cineWall)"/>
+          <path d="M0 695 H1600 V900 H0Z" fill="#100b06" stroke="#bd9042" stroke-width="7"/>
+          <path d="M0 760 H1600 M0 835 H1600 M220 695 L130 900 M550 695 L510 900 M1050 695 L1090 900 M1380 695 L1470 900" stroke="#6e4d25" stroke-width="4" opacity=".64"/>
+          <g class="shop-frame" fill="none" stroke="#d1aa58"><path d="M104 0 V690 M125 0 V690 M1475 0 V690 M1496 0 V690" stroke-width="8"/><path d="M104 91 H1496 M104 668 H1496" stroke-width="6"/></g>
+
+          <!-- Rear entrance through which the matching protagonist walks. -->
+          <g id="shop-entrance" class="shop-entrance">
+            <path d="M1065 650 V223 Q1065 105 1235 105 Q1405 105 1405 223 V650Z" fill="#020303" stroke="#b98c3f" stroke-width="13"/>
+            <path class="entrance-door" d="M1090 645 V230 Q1090 139 1235 132 Q1380 139 1380 230 V645Z" fill="url(#cineIron)" stroke="#5c472e" stroke-width="8"/>
+            <path d="M1235 136 V643 M1096 418 H1374" stroke="#0a0b0b" stroke-width="13"/>
+            <circle cx="1341" cy="441" r="20" fill="#1c1308" stroke="#d0a24b" stroke-width="6"/>
+            <path class="outside-light" d="M1088 643 V230 Q1088 139 1235 132 Q1382 139 1382 230 V643Z" fill="#8db8c7" opacity="0"/>
+          </g>
+
+          <!-- Dense shelves and individually turning mechanisms. -->
+          <g id="shop-shelves" filter="url(#cineInk)">
+            <g fill="url(#cineWood)" stroke="#bd9146" stroke-width="7">
+              <path d="M112 168 H493 V650 H112Z"/><path d="M559 129 H946 V600 H559Z"/>
+            </g>
+            <g stroke="#765329" stroke-width="7"><path d="M124 294 H482 M124 432 H482 M124 566 H482"/><path d="M571 255 H934 M571 393 H934 M571 525 H934"/></g>
+            <g fill="#0a0907" stroke="#d2aa55" stroke-width="5">
+              <circle cx="202" cy="229" r="47"/><circle cx="388" cy="231" r="38"/><circle cx="647" cy="198" r="44"/><circle cx="839" cy="199" r="52"/>
+              <circle cx="276" cy="363" r="54"/><circle cx="423" cy="366" r="35"/><circle cx="626" cy="328" r="37"/><circle cx="806" cy="332" r="48"/>
+            </g>
+            <g class="shop-clock-hands" stroke="#f0ce72" stroke-width="5" stroke-linecap="round">
+              <path d="M202 229 V195 M202 229 L227 244 M388 231 V202 M388 231 L367 247 M647 198 V166 M647 198 L674 212 M839 199 V159 M839 199 L813 226"/>
+              <path d="M276 363 V320 M276 363 L309 382 M423 366 V339 M423 366 L405 388 M626 328 V300 M626 328 L647 345 M806 332 V296 M806 332 L779 352"/>
+            </g>
+            <g class="shop-gear-a" fill="none" stroke="#bd8d3d" stroke-width="8" stroke-dasharray="14 7"><circle cx="500" cy="210" r="70"/><circle cx="975" cy="350" r="88"/></g>
+            <g class="shop-gear-b" fill="none" stroke="#8d672f" stroke-width="7" stroke-dasharray="11 6"><circle cx="523" cy="306" r="45"/><circle cx="997" cy="477" r="57"/></g>
+          </g>
+
+          <g class="hanging-lamps" fill="none" stroke="#d3a64e" stroke-width="8">
+            <path d="M349 0 V88 M800 0 V69 M1190 0 V84"/>
+            <path d="M300 124 Q349 63 398 124Z M747 105 Q800 43 853 105Z M1138 120 Q1190 58 1242 120Z" fill="#201206"/>
+            <ellipse cx="349" cy="127" rx="93" ry="74" fill="url(#cineLight)" stroke="none" opacity=".46"/>
+            <ellipse cx="800" cy="108" rx="101" ry="79" fill="url(#cineLight)" stroke="none" opacity=".42"/>
+            <ellipse cx="1190" cy="123" rx="96" ry="75" fill="url(#cineLight)" stroke="none" opacity=".44"/>
+          </g>
+
+          <!-- Viewer stands behind this counter, establishing the changed point of view. -->
+          <g id="shop-counter" class="shop-counter">
+            <path d="M-70 671 Q800 621 1670 671 V920 H-70Z" fill="#050403" stroke="#111" stroke-width="22"/>
+            <path d="M-40 680 Q800 632 1640 680" fill="none" stroke="#f1ead8" stroke-width="39"/>
+            <path d="M-40 686 Q800 638 1640 686" fill="none" stroke="#c69c4b" stroke-width="7"/>
+            <path d="M80 764 H1520 M120 842 H1480" stroke="#b4863c" stroke-width="5"/>
+          </g>
+
+          <!-- Exact intro character language, separated into animation-ready parts. -->
+          <g transform="translate(1120 570)">
+            <g id="cinematic-character" class="cinematic-character" filter="url(#cineInk)">
+              <ellipse class="character-shadow" cx="0" cy="203" rx="126" ry="24" fill="#000" opacity=".58"/>
+
+              <g class="character-leg character-leg-back" transform="translate(30 126)">
+                <path d="M0 0 Q34 5 43 42 L37 119 Q17 145 -4 117 L-14 45Z" fill="#f5ece5" stroke="#0b0b0b" stroke-width="11"/>
+                <path d="M-4 117 Q17 145 37 119 L35 151 Q11 168 -12 147Z" fill="#0d1113" stroke="#0b0b0b" stroke-width="10"/>
+              </g>
+              <g class="character-leg character-leg-front" transform="translate(-38 126)">
+                <path d="M0 0 Q34 5 43 42 L37 119 Q17 145 -4 117 L-14 45Z" fill="#f5ece5" stroke="#0b0b0b" stroke-width="11"/>
+                <path d="M-4 117 Q17 145 37 119 L35 151 Q11 168 -12 147Z" fill="#0d1113" stroke="#0b0b0b" stroke-width="10"/>
+              </g>
+
+              <g class="character-body">
+                <path d="M-100 70 Q0 31 100 70 L81 153 Q0 192 -81 153Z" fill="#07516d" stroke="#090a0b" stroke-width="12"/>
+                <path d="M-68 -14 Q0 -45 68 -14 L83 120 Q0 151 -83 120Z" fill="url(#cineDress)" stroke="#090a0b" stroke-width="12"/>
+                <path d="M-57 -1 V118 M57 -1 V118" stroke="#343b3e" stroke-width="10"/>
+                <g fill="#d9ad55"><path d="M-19 41 L0 27 L19 41 L0 55Z"/><path d="M-19 70 L0 56 L19 70 L0 84Z"/><path d="M-19 99 L0 85 L19 99 L0 113Z"/></g>
+              </g>
+
+              <g class="character-arm character-arm-left" transform="translate(-71 5)">
+                <path d="M0 0 Q-54 17 -69 79 Q-67 108 -41 105 Q-12 67 26 51Z" fill="#e8e9e5" stroke="#090a0b" stroke-width="12"/>
+                <circle cx="-50" cy="101" r="20" fill="#f6ece8" stroke="#090a0b" stroke-width="10"/>
+              </g>
+              <g class="character-arm character-arm-right" transform="translate(70 5)">
+                <path d="M0 0 Q52 19 62 80 Q58 108 32 102 Q12 66 -26 50Z" fill="#e8e9e5" stroke="#090a0b" stroke-width="12"/>
+                <circle cx="43" cy="100" r="20" fill="#f6ece8" stroke="#090a0b" stroke-width="10"/>
+              </g>
+              <g class="character-point-arm" transform="translate(70 5)">
+                <path d="M0 0 Q49 13 76 56 L128 83 Q142 99 128 115 Q113 126 98 109 L48 91 Q14 71 -23 49Z" fill="#e8e9e5" stroke="#090a0b" stroke-width="12"/>
+                <path d="M126 83 L183 95 Q203 104 190 119 L132 114" fill="#f6ece8" stroke="#090a0b" stroke-width="10" stroke-linecap="round"/>
+              </g>
+
+              <g class="character-head" transform="translate(0 -112)">
+                <g class="character-ear character-ear-left"><circle cx="-91" cy="-52" r="61" fill="#a8aaa8" stroke="#090a0b" stroke-width="12"/><path d="M-119 -52 Q-92 -70 -65 -49" fill="none" stroke="#5e6261" stroke-width="7"/></g>
+                <g class="character-ear character-ear-right"><circle cx="91" cy="-52" r="61" fill="#a8aaa8" stroke="#090a0b" stroke-width="12"/><path d="M64 -49 Q91 -70 119 -51" fill="none" stroke="#5e6261" stroke-width="7"/></g>
+                <path d="M-104 -30 Q-116 44 -83 92 Q-47 134 0 129 Q54 134 88 91 Q117 39 101 -31 Q73 -103 0 -108 Q-74 -103 -104 -30Z" fill="#f6ece8" stroke="#090a0b" stroke-width="13"/>
+                <g class="character-hair">
+                  <path d="M-111 -38 Q-90 -130 0 -137 Q94 -132 114 -37 L92 5 L75 -24 L61 18 L35 -17 L15 19 L-12 -21 L-40 18 L-56 -19 L-85 12Z" fill="url(#cineHair)" stroke="#090a0b" stroke-width="13" stroke-linejoin="round"/>
+                  <path d="M-105 10 Q-132 79 -92 136 L-49 107 L-36 139 L0 116 L38 140 L51 107 L94 136 Q132 73 105 11 Q101 92 0 105 Q-101 92 -105 10Z" fill="url(#cineHair)" stroke="#090a0b" stroke-width="13"/>
+                  <path d="M-67 -103 Q-8 -144 52 -112 M-93 -49 Q-40 -83 11 -72" fill="none" stroke="#fff" stroke-opacity=".72" stroke-width="9" stroke-linecap="round"/>
+                </g>
+                <g class="character-eyes">
+                  <g class="character-eye"><path d="M-70 45 Q-45 29 -20 46 Q-45 67 -70 45Z" fill="#d76d88" stroke="#090a0b" stroke-width="9"/><path d="M-67 38 Q-45 24 -22 39" fill="none" stroke="#090a0b" stroke-width="7"/><circle cx="-39" cy="45" r="5" fill="#fff"/></g>
+                  <g class="character-eye"><path d="M20 46 Q45 29 70 45 Q45 67 20 46Z" fill="#d76d88" stroke="#090a0b" stroke-width="9"/><path d="M23 39 Q45 24 68 38" fill="none" stroke="#090a0b" stroke-width="7"/><circle cx="51" cy="45" r="5" fill="#fff"/></g>
+                </g>
+                <path class="character-brows" d="M-69 18 Q-45 8 -23 18 M23 18 Q45 8 69 18" fill="none" stroke="#090a0b" stroke-width="7" stroke-linecap="round"/>
+                <path d="M-5 75 Q0 79 5 75" fill="none" stroke="#53352f" stroke-width="5" stroke-linecap="round"/>
+              </g>
+
+              <g class="character-bow" transform="translate(0 -3)">
+                <path d="M-7 5 Q-45 -31 -67 -1 Q-50 35 -8 19Z" fill="#0b5d7a" stroke="#090a0b" stroke-width="10"/>
+                <path d="M7 5 Q45 -31 67 -1 Q50 35 8 19Z" fill="#0b5d7a" stroke="#090a0b" stroke-width="10"/>
+                <path d="M-54 -4 L-20 15 M54 -4 L20 15" stroke="#d5a84e" stroke-width="9"/>
+                <circle cx="0" cy="10" r="15" fill="#d5a84e" stroke="#090a0b" stroke-width="8"/>
+              </g>
+            </g>
+          </g>
+          <path class="counter-foreground" d="M-40 680 Q800 632 1640 680" fill="none" stroke="#f1ead8" stroke-width="42"/>
+          <path class="counter-foreground" d="M-40 687 Q800 639 1640 687" fill="none" stroke="#c69c4b" stroke-width="7"/>
+        </g>
+
+        <!-- The original central door remains the foreground threshold. -->
+        <g id="cinematic-door" class="cinematic-door">
+          <circle class="door-light-spill" cx="800" cy="454" r="420" fill="url(#cineLight)" opacity="0"/>
+          <path d="M460 804 V320 Q460 84 800 84 Q1140 84 1140 320 V804Z" fill="none" stroke="#bb8738" stroke-width="32"/>
+          <g class="cine-door-panel cine-door-left">
+            <path d="M482 794 V321 Q482 120 800 112 V794Z" fill="url(#cineIron)" stroke="#6b5337" stroke-width="13"/>
+            <path d="M790 129 V782 M495 487 H790" stroke="#101111" stroke-width="20"/>
+            <g fill="#b88a48"><circle cx="520" cy="267" r="10"/><circle cx="520" cy="509" r="10"/><circle cx="520" cy="730" r="10"/></g>
+          </g>
+          <g class="cine-door-panel cine-door-right">
+            <path d="M800 112 Q1118 120 1118 321 V794 H800Z" fill="url(#cineIron)" stroke="#6b5337" stroke-width="13"/>
+            <path d="M810 129 V782 M810 487 H1105" stroke="#101111" stroke-width="20"/>
+            <g fill="#b88a48"><circle cx="1080" cy="267" r="10"/><circle cx="1080" cy="509" r="10"/><circle cx="1080" cy="730" r="10"/></g>
+          </g>
+          <g class="cine-door-lock" transform="translate(800 510)">
+            <circle r="72" fill="#100d08" stroke="#d2a24a" stroke-width="15"/>
+            <circle r="40" fill="#25231e" stroke="#72542d" stroke-width="8"/>
+            <path d="M0 -29 V29 M-29 0 H29 M-21 -21 L21 21 M21 -21 L-21 21" stroke="#f0c55e" stroke-width="8"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- First-person chest reveal; lapels, hands and heart animate independently. -->
+      <g id="cinematic-pov" class="cinematic-pov">
+        <circle class="heart-aura" cx="800" cy="635" r="210" fill="url(#cineLight)" opacity="0"/>
+        <path class="pov-torso" d="M525 900 Q550 594 800 547 Q1050 594 1075 900Z" fill="#d9dcda" stroke="#090a0b" stroke-width="20"/>
+        <path class="pov-dark-body" d="M606 900 Q617 641 800 605 Q983 641 994 900Z" fill="#111619" stroke="#090a0b" stroke-width="14"/>
+        <g class="pov-lapel pov-lapel-left"><path d="M571 594 Q671 571 800 629 L723 784 L596 702Z" fill="#f3f0e8" stroke="#090a0b" stroke-width="15"/></g>
+        <g class="pov-lapel pov-lapel-right"><path d="M1029 594 Q929 571 800 629 L877 784 L1004 702Z" fill="#f3f0e8" stroke="#090a0b" stroke-width="15"/></g>
+        <g class="pov-hand pov-hand-left">
+          <path d="M582 710 Q631 651 705 646 L743 684 Q686 741 641 783 Q599 793 573 761Z" fill="#f6ece8" stroke="#090a0b" stroke-width="14"/>
+          <path d="M638 682 Q669 674 712 669 M626 704 Q665 697 724 688 M620 727 Q658 721 718 704" fill="none" stroke="#9e766e" stroke-width="6" stroke-linecap="round"/>
+        </g>
+        <g class="pov-hand pov-hand-right">
+          <path d="M1018 710 Q969 651 895 646 L857 684 Q914 741 959 783 Q1001 793 1027 761Z" fill="#f6ece8" stroke="#090a0b" stroke-width="14"/>
+          <path d="M962 682 Q931 674 888 669 M974 704 Q935 697 876 688 M980 727 Q942 721 882 704" fill="none" stroke="#9e766e" stroke-width="6" stroke-linecap="round"/>
+        </g>
+        <g class="mechanical-heart" clip-path="url(#heartWindow)">
+          <path d="M716 562 Q800 512 884 562 V735 Q800 786 716 735Z" fill="#020303" stroke="#e0ad4e" stroke-width="14"/>
+          <circle class="heart-gear-main" cx="800" cy="652" r="91" fill="#151008" stroke="#f3c559" stroke-width="18" stroke-dasharray="18 9"/>
+          <path class="heart-gear-main" d="M800 570 V734 M718 652 H882 M742 594 L858 710 M858 594 L742 710" stroke="#c78e2b" stroke-width="16"/>
+          <circle class="heart-gear-small heart-small-a" cx="729" cy="584" r="38" fill="#090806" stroke="#cf9d42" stroke-width="10" stroke-dasharray="11 6"/>
+          <circle class="heart-gear-small heart-small-b" cx="880" cy="724" r="44" fill="#090806" stroke="#cf9d42" stroke-width="10" stroke-dasharray="12 6"/>
+          <circle cx="800" cy="652" r="25" fill="#f1be4a" stroke="#fff0a4" stroke-width="8"/>
+        </g>
+      </g>
+
+      <rect class="cinematic-vignette" width="1600" height="900" fill="none" stroke="#000" stroke-width="120" opacity=".76" pointer-events="none"/>
+      <rect class="cinematic-blackout" width="1600" height="900" fill="#000" opacity="0" pointer-events="none"/>
+      <text class="cinematic-final-line" x="800" y="455" text-anchor="middle">It's time for the next cycle.</text>
+    </svg>
   </div>
 
-  <script src="game.js?v=30"></script>
+  <script src="game.js?v=32"></script>
 </body>
 </html>

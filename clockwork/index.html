@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Thirteenth Chime — Room Escape</title>
   <meta name="description" content="Explore a Victorian clockwork workshop through fixed first-person views. Click to inspect and find a way out." />
-  <link rel="stylesheet" href="style.css?v=26" />
+  <link rel="stylesheet" href="style.css?v=28" />
 </head>
 <body>
 
@@ -394,7 +394,7 @@
             <path d="M195 74 H335 V104 H480 M725 83 H800 V387" fill="none" stroke="#11110f" stroke-width="12"/>
             <path d="M195 75 H335 V104 H480 M725 83 H800 V387" fill="none" stroke="#d2aa55" stroke-opacity=".78" stroke-width="3"/>
             <!-- A soot-dark painting: three bells catch the light beneath a high star. -->
-            <g aria-label="An atmospheric painting of a midnight bell tower">
+            <g id="gearwall-painting" aria-label="An atmospheric painting of a midnight bell tower">
               <rect x="62" y="92" width="214" height="194" rx="3" fill="#030404" stroke="#d2aa55" stroke-width="10"/>
               <rect x="76" y="106" width="186" height="166" fill="#080b0e" stroke="#f0d183" stroke-width="3"/>
               <path d="M78 242 L128 192 L164 218 L205 167 L260 231 V270 H78Z" fill="#11191a"/>
@@ -407,7 +407,7 @@
               </g>
             </g>
             <!-- Separate adjustable mantel clock. -->
-            <g aria-label="A small antique adjustable clock">
+            <g id="gearwall-clock" aria-label="A small antique adjustable clock">
               <path d="M716 404 H827 L840 438 H703Z" fill="#f1efe7" stroke="#d2aa55" stroke-width="5"/>
               <rect x="726" y="292" width="92" height="120" rx="12" fill="#030404" stroke="#d2aa55" stroke-width="6"/>
               <circle cx="772" cy="342" r="35" fill="#f1efe7" stroke="#d2aa55" stroke-width="4"/>
@@ -419,7 +419,7 @@
             <path d="M92 431 H318 L347 483 H70Z" fill="#f1efe7" stroke="#d2aa55" stroke-width="6"/>
             <path d="M112 482 V565 M306 482 V565" stroke="#050606" stroke-width="22"/>
             <path d="M112 482 V565 M306 482 V565" stroke="#c99f4c" stroke-width="4"/>
-            <rect x="158" y="366" width="110" height="68" rx="7" fill="#030404" stroke="#d2aa55" stroke-width="5"/>
+            <rect id="workbench-drawer-art" x="158" y="366" width="110" height="68" rx="7" fill="#030404" stroke="#d2aa55" stroke-width="5"/>
             <path d="M169 380 H257 M169 410 H257" stroke="#d9b363" stroke-opacity=".75" stroke-width="2"/>
             <circle cx="220" cy="400" r="8" fill="#ead38e"/>
             <circle cx="500" cy="300" r="500" fill="url(#leftShade)"/>
@@ -626,7 +626,7 @@
             <path d="M0 431 H1000 V600 H0Z" fill="#050504" stroke="#c49a49" stroke-width="5"/>
             <path d="M0 478 H1000 M0 535 H1000 M180 431 L115 600 M500 431 V600 M820 431 L885 600" stroke="#80612e" stroke-width="3" opacity=".62"/>
 
-            <g aria-label="Antique wall rhythm mechanism">
+            <g id="resonance-wall-device" aria-label="Antique wall rhythm mechanism">
               <path d="M167 108 H451 V345 H167Z" fill="#030404" stroke="#11110e" stroke-width="15"/>
               <path d="M172 113 H446 V340 H172Z" fill="none" stroke="#d0a754" stroke-width="7"/>
               <circle cx="270" cy="226" r="72" fill="#070706" stroke="#c79e4d" stroke-width="8" stroke-dasharray="14 7"/>
@@ -641,7 +641,7 @@
             </g>
             <text x="309" y="382" text-anchor="middle" fill="#c9a766" font-family="serif" font-size="18" font-style="italic" letter-spacing="2">Listen. Time remembers its rhythm.</text>
 
-            <g aria-label="Iron floor trapdoor with a central brass striking plate">
+            <g id="resonance-trapdoor" aria-label="Iron floor trapdoor with a central brass striking plate">
               <path d="M548 454 L849 454 L905 570 H492Z" fill="#070807" stroke="#11110f" stroke-width="15" stroke-linejoin="round"/>
               <path d="M548 454 L849 454 L905 570 H492Z" fill="none" stroke="#cda454" stroke-width="7" stroke-linejoin="round"/>
               <path d="M585 480 H820 M558 524 H864" stroke="#74582b" stroke-width="4"/>
@@ -649,7 +649,7 @@
               <ellipse cx="700" cy="512" rx="44" ry="24" fill="#3b270d" stroke="#c99d47" stroke-width="4"/>
             </g>
             <!-- Frozen vessel occupies the clear right wall above the trapdoor. -->
-            <g aria-label="A frost-covered antique glass vessel containing a golden winding key">
+            <g id="resonance-frozen-vessel" aria-label="A frost-covered antique glass vessel containing a golden winding key">
               <path d="M735 78 V122 M865 78 V122" stroke="#cda452" stroke-width="13"/>
               <path d="M716 89 H884 M732 118 H868" stroke="#6e5229" stroke-width="8"/>
               <path d="M745 116 Q720 155 727 316 Q730 397 800 414 Q870 397 873 316 Q880 155 855 116Z" fill="#9de3ee" fill-opacity=".23" stroke="#e5fbff" stroke-opacity=".75" stroke-width="8"/>
@@ -922,6 +922,6 @@
     <p>The mechanism exhales into darkness.</p>
   </div>
 
-  <script src="game.js?v=26"></script>
+  <script src="game.js?v=28"></script>
 </body>
 </html>

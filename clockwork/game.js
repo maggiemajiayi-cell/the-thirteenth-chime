@@ -24,6 +24,7 @@ const game = {
   drawerDigits: [0, 0, 0, 0],
   drawerOpen: false,
   paperCollected: false,
+  paperUsed: false,
   inventoryOrder: [],
   clock: { hour: 12, minute: 30, solved: false },
   soundPuzzle: { cluePlaying: false, taps: [], lastTap: 0, solved: false },
@@ -245,7 +246,7 @@ const inventoryItems = {
     button: document.getElementById('inventory-note'),
     icon: document.getElementById('inventory-note-icon'),
     name: 'Worn paper',
-    available: () => game.paperCollected,
+    available: () => game.paperCollected && !game.paperUsed,
   },
   key: {
     button: document.getElementById('inventory-key'),
@@ -335,7 +336,7 @@ Object.entries(inventoryItems).forEach(([id, item]) => {
 });
 
 function takePaperNote() {
-  if (game.transitioning || game.currentView !== 1 || game.closeUp || game.paperCollected) return;
+  if (game.transitioning || game.currentView !== 1 || game.closeUp || game.paperCollected || game.paperUsed) return;
   game.paperCollected = true;
   document.getElementById('floor-note').classList.add('puzzle-hidden');
   addInventoryItem('note');
@@ -346,7 +347,10 @@ function takePaperNote() {
 function takeKey() {
   if (game.transitioning || game.closeUp !== 'drawer' || !game.drawerOpen || game.keyCollected) return;
   game.keyCollected = true;
+  game.paperUsed = true;
   document.getElementById('drawer-key').classList.add('puzzle-hidden');
+  document.getElementById('floor-note').classList.add('puzzle-hidden');
+  removeInventoryItem('note');
   addInventoryItem('key');
   renderInventory();
   showMessage('The brass key joins your inventory. It does not fit the final lock.');
@@ -419,7 +423,7 @@ function effectsVolume(multiplier = 1) {
 }
 
 function playMechanicalSound(kind = 'tick') {
-  const volume = effectsVolume(kind === 'reject' || kind === 'unlock' ? .42 : .58);
+  const volume = effectsVolume(kind === 'reject' || kind === 'unlock' ? .42 : kind === 'ui' ? .18 : .58);
   if (volume <= 0) return;
   const context = getEffectsAudioContext();
   if (!context) return;
@@ -428,6 +432,30 @@ function playMechanicalSound(kind = 'tick') {
   const gain = context.createGain();
   oscillator.connect(gain);
   gain.connect(context.destination);
+
+  if (kind === 'ui') {
+    oscillator.type = 'triangle';
+    oscillator.frequency.setValueAtTime(660, now);
+    oscillator.frequency.exponentialRampToValueAtTime(440, now + .075);
+    gain.gain.setValueAtTime(volume, now);
+    gain.gain.exponentialRampToValueAtTime(.0001, now + .085);
+
+    const overtone = context.createOscillator();
+    const overtoneGain = context.createGain();
+    overtone.connect(overtoneGain);
+    overtoneGain.connect(context.destination);
+    overtone.type = 'sine';
+    overtone.frequency.setValueAtTime(990, now);
+    overtone.frequency.exponentialRampToValueAtTime(660, now + .055);
+    overtoneGain.gain.setValueAtTime(volume * .28, now);
+    overtoneGain.gain.exponentialRampToValueAtTime(.0001, now + .065);
+
+    oscillator.start(now);
+    oscillator.stop(now + .09);
+    overtone.start(now);
+    overtone.stop(now + .07);
+    return;
+  }
 
   if (kind === 'reject' || kind === 'unlock') {
     oscillator.type = 'sawtooth';
@@ -823,6 +851,22 @@ document.querySelectorAll('[data-action]').forEach(element => {
       interact();
     }
   });
+});
+
+function isVisibleInteraction(target) {
+  if (!(target instanceof Element)) return false;
+  const interactive = target.closest('button:not(:disabled), [data-action], .puzzle-wheel');
+  return Boolean(interactive && !interactive.closest('[aria-hidden="true"]'));
+}
+
+document.addEventListener('pointerdown', event => {
+  if (event.button === 0 && isVisibleInteraction(event.target)) playMechanicalSound('ui');
+});
+
+document.addEventListener('keydown', event => {
+  if (!event.repeat && (event.key === 'Enter' || event.key === ' ') && isVisibleInteraction(event.target)) {
+    playMechanicalSound('ui');
+  }
 });
 
 document.addEventListener('keydown', event => {

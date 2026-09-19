@@ -875,9 +875,11 @@ button.inventory-slot:focus-visible {
 }
 .hotspot {
   fill: transparent;
-  stroke: none;
+  stroke: transparent !important;
+  stroke-width: 0 !important;
   cursor: pointer;
   pointer-events: all;
+  outline: none;
 }
 .hotspot[data-action="zoom-drawer"] { cursor: zoom-in; }
 .hotspot[data-action^="zoom-"] { cursor: zoom-in; }
@@ -895,15 +897,34 @@ button.inventory-slot:focus-visible {
 }
 .floor-note .note-hitarea { pointer-events: all; }
 .object-hotspot {
-  stroke: transparent;
-  stroke-width: 4;
-  transition: stroke .18s, filter .18s;
+  filter: none;
 }
 .object-hotspot:hover,
 .object-hotspot:focus-visible {
-  stroke: rgba(232,184,64,.86);
-  filter: drop-shadow(0 0 9px rgba(232,184,64,.72));
+  stroke: transparent !important;
+  stroke-width: 0 !important;
+  filter: none;
   outline: none;
+}
+#gearwall-painting,
+#gearwall-clock,
+#workbench-drawer-art,
+#resonance-wall-device,
+#resonance-trapdoor,
+#resonance-frozen-vessel,
+#workshop-central-door,
+#door-lock-visual {
+  transition: filter .2s ease;
+}
+.room-svg:has([data-action="zoom-painting"]:is(:hover, :focus-visible)) #gearwall-painting,
+.room-svg:has([data-action="zoom-clock"]:is(:hover, :focus-visible)) #gearwall-clock,
+.room-svg:has([data-action="zoom-drawer"]:is(:hover, :focus-visible)) #workbench-drawer-art,
+.room-svg:has([data-action="zoom-sound-device"]:is(:hover, :focus-visible)) #resonance-wall-device,
+.room-svg:has([data-action="zoom-trapdoor"]:is(:hover, :focus-visible)) #resonance-trapdoor,
+.room-svg:has([data-action="zoom-frozen"]:is(:hover, :focus-visible)) #resonance-frozen-vessel,
+.room-svg:has([data-action="zoom-central-door"]:is(:hover, :focus-visible)) #workshop-central-door,
+.room-svg:has([data-action="unlock-door"]:is(:hover, :focus-visible)) #door-lock-visual {
+  filter: drop-shadow(0 0 9px rgba(232,184,64,.52)) brightness(1.08);
 }
 .workshop-pendulum {
   transform-box: view-box;
@@ -984,8 +1005,12 @@ button.inventory-slot:focus-visible {
 }
 .hand-hitarea:hover,
 .hand-hitarea:focus-visible {
-  stroke: rgba(232,184,64,.18);
+  stroke: transparent;
   outline: none;
+}
+.room-svg:has(#clock-hour-hitarea:is(:hover, :focus-visible)) #clock-hour-hand,
+.room-svg:has(#clock-minute-hitarea:is(:hover, :focus-visible)) #clock-minute-hand {
+  filter: drop-shadow(0 0 6px rgba(232,184,64,.75));
 }
 .clock-control { cursor: pointer; }
 .clock-control rect { transition: fill .18s, stroke .18s, filter .18s; }
@@ -1041,9 +1066,12 @@ button.inventory-slot:focus-visible {
 }
 .sound-device-hitarea:hover,
 .sound-device-hitarea:focus-visible {
-  stroke: rgba(255,225,144,.62);
-  stroke-width: 5;
+  stroke: transparent;
+  stroke-width: 0;
   outline: none;
+}
+#room-sound-device-detail:has(.sound-device-hitarea:is(:hover, :focus-visible)) #sound-device-gears {
+  filter: drop-shadow(0 0 8px rgba(232,184,64,.52));
 }
 .sound-hammer {
   transform-box: fill-box;

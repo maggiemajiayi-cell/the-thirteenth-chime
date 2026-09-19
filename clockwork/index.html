@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Thirteenth Chime — Room Escape</title>
   <meta name="description" content="Explore a Victorian clockwork workshop through fixed first-person views. Click to inspect and find a way out." />
-  <link rel="stylesheet" href="style.css?v=28" />
+  <link rel="stylesheet" href="style.css?v=30" />
 </head>
 <body>
 
@@ -919,9 +919,10 @@
   </div><!-- /#game-screen -->
 
   <div id="ending-placeholder" class="ending-placeholder" aria-hidden="true">
-    <p>The mechanism exhales into darkness.</p>
+    <video id="ending-video" src="the_thirteenth_chime_ending_animatic.mp4" preload="metadata" playsinline aria-label="The Thirteenth Chime ending animatic"></video>
+    <p id="ending-fallback" hidden>The mechanism exhales into darkness.</p>
   </div>
 
-  <script src="game.js?v=28"></script>
+  <script src="game.js?v=30"></script>
 </body>
 </html>

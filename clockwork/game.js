@@ -49,6 +49,8 @@ const drawerSolution = '1158';
 const fade = document.getElementById('scene-fade');
 const bgm = document.getElementById('bgm');
 const introVideo = document.getElementById('intro-video');
+const endingVideo = document.getElementById('ending-video');
+const endingFallback = document.getElementById('ending-fallback');
 const introOverlay = document.getElementById('intro-video-overlay');
 const volumeControl = document.getElementById('volume-control');
 const volumeToggle = document.getElementById('volume-toggle');
@@ -75,6 +77,8 @@ function setVolume(level, resumePlayback = true) {
   const safeLevel = [0, 25, 50, 75, 100].includes(level) ? level : 25;
   bgm.volume = safeLevel / 100;
   bgm.muted = safeLevel === 0;
+  endingVideo.volume = safeLevel / 100;
+  endingVideo.muted = safeLevel === 0;
   volumeIcon.dataset.level = String(safeLevel);
   volumeToggle.setAttribute('aria-label', `Adjust volume, currently ${safeLevel} percent`);
   volumeMarks.forEach(mark => {
@@ -194,6 +198,13 @@ function finishIntro() {
 
 introVideo.addEventListener('ended', finishIntro);
 introVideo.addEventListener('error', finishIntro);
+
+function showEndingFallback() {
+  endingVideo.hidden = true;
+  endingFallback.hidden = false;
+}
+
+endingVideo.addEventListener('error', showEndingFallback);
 
 function turnView(direction) {
   if (game.transitioning || game.closeUp || !document.getElementById('game-screen').classList.contains('active')) return;
@@ -791,11 +802,16 @@ function beginEndingPlaceholder() {
   game.transitioning = true;
   game.doorUnlocked = true;
   fade.classList.add('visible');
-  window.setTimeout(() => {
-    const ending = document.getElementById('ending-placeholder');
-    ending.classList.add('active');
-    ending.setAttribute('aria-hidden', 'false');
-  }, 720);
+  const ending = document.getElementById('ending-placeholder');
+  ending.classList.add('active');
+  ending.setAttribute('aria-hidden', 'false');
+  endingVideo.hidden = false;
+  endingFallback.hidden = true;
+  endingVideo.currentTime = 0;
+  endingVideo.volume = bgm.volume;
+  endingVideo.muted = bgm.muted;
+  bgm.pause();
+  endingVideo.play().catch(showEndingFallback);
 }
 
 function unlockDoor() {

@@ -881,6 +881,13 @@ button.inventory-slot:focus-visible {
   pointer-events: all;
   outline: none;
 }
+.room-svg [data-action]:focus,
+.room-svg [data-action]:focus-visible,
+.room-svg [tabindex]:focus,
+.room-svg [tabindex]:focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
+}
 .hotspot[data-action="zoom-drawer"] { cursor: zoom-in; }
 .hotspot[data-action^="zoom-"] { cursor: zoom-in; }
 .floor-note {
@@ -1199,6 +1206,7 @@ button.inventory-slot:focus-visible {
 .drain-valve {
   cursor: pointer;
   touch-action: manipulation;
+  outline: none;
 }
 .drain-valve:hover > circle:first-child,
 .drain-valve:focus-visible > circle:first-child {
@@ -1273,12 +1281,25 @@ button.inventory-slot:focus-visible {
   background: #000;
   color: #b99552;
   text-align: center;
+  overflow: hidden;
 }
 .ending-placeholder.active { display: grid; animation: ending-breathe 2s ease both; }
+.ending-placeholder video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
 .ending-placeholder p {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
   font: italic 1.15rem var(--font-body);
   letter-spacing: .14em;
 }
+.ending-placeholder p[hidden] { display: none; }
 @keyframes ending-breathe { from { opacity: 0; } to { opacity: 1; } }
 .shaft-active #shaft-core {
   animation: shaft-awake 1.4s ease-in-out infinite;
